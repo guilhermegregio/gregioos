@@ -113,6 +113,8 @@
 
     brave
     zed-editor
+    wezterm
+    kitty
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
