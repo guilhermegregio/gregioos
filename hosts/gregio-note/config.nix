@@ -15,8 +15,9 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   networking.hostName = host; # Define your hostname.
+  networking.nameservers = [ "1.1.1.1" "8.8.8.8" ];
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
-
+  #
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
@@ -53,13 +54,15 @@
   services.xserver.xkb = {
     layout = "us";
     variant = "";
+    options = "caps:escape,tab:escape";
   };
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
 
   # Enable sound with pipewire.
-  hardware.pulseaudio.enable = false;
+  services.pulseaudio.enable = false;
+
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -88,8 +91,8 @@
   };
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "gregio";
+  services.displayManager.autoLogin.enable = true;
+  services.displayManager.autoLogin.user = "gregio";
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
   systemd.services."getty@tty1".enable = false;
