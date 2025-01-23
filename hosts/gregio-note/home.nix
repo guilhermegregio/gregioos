@@ -62,6 +62,7 @@ in
         fastfetch
       '';
       shellAliases = {
+        g = "git";
         fr = "nh os switch --hostname ${host} /home/${username}/gregioos";
         fu = "nh os switch --hostname ${host} --update /home/${username}/gregioos";
         ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
