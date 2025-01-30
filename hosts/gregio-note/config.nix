@@ -3,7 +3,9 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { config, pkgs, host, username, options, ... }:
-
+let
+  inherit (import ./variables.nix) stateVersion;
+in
 {
   imports =
     [ # Include the results of the hardware scan.
@@ -46,14 +48,14 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-  # Enable the GNOME Desktop Environment.
+  # Enable the GNOME 531910160010004Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
 
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
-    variant = "";
+    variant = "intl";
     options = "caps:escape,tab:escape";
   };
 
@@ -98,8 +100,10 @@
   systemd.services."getty@tty1".enable = false;
   systemd.services."autovt@tty1".enable = false;
 
-  # Install firefox.
-  programs.firefox.enable = true;
+  services.interception-tools = {
+    enable = true;
+    plugins = [ pkgs.interception-tools-plugins.dual-function-keys ];
+  };
 
   # Allow unfree packages
   nixpkgs.config.allowUnfree = true;
@@ -113,12 +117,31 @@
     htop
     bat
     nh
+    interception-tools
+    interception-tools-plugins.dual-function-keys
+    ngrok
 
     brave
     zed-editor
-    wezterm
     kitty
   ];
+
+  environment.etc."interception/tab-to-esc.yaml".text = ''
+    - JOB: "intercept -g $DEVNODE | dual-function-keys -c /etc/interception/tab-to-esc.yaml | uinput -d $DEVNODE"
+      DEVICE:
+        EVENTS:
+          EV_KEY: [KEY_TAB]
+  '';
+
+  systemd.services.udevmon = {
+      enable = true;
+      description = "Interception udevmon";
+      wantedBy = [ "multi-user.target" ];
+      serviceConfig = {
+        ExecStart = "${pkgs.interception-tools}/bin/udevmon -c /etc/interception/tab-to-esc.yaml";
+        Restart = "always";
+      };
+  };
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
@@ -145,6 +168,5 @@
   # this value at the release version of the first install of this system.
   # Before changing this value read the documentation for this option
   # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "24.11"; # Did you read the comment?
-
+  system.stateVersion = stateVersion; # Did you read the comment?
 }

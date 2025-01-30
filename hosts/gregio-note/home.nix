@@ -5,13 +5,13 @@
   ...
 }:
 let
-  inherit (import ./variables.nix) gitUsername gitEmail;
+  inherit (import ./variables.nix) gitUsername gitEmail stateVersion;
 in
 {
   # Home Manager Settings
   home.username = "${username}";
   home.homeDirectory = "/home/${username}";
-  home.stateVersion = "24.11";
+  home.stateVersion = stateVersion;
 
   # Import Program Configurations
   imports = [
@@ -25,6 +25,13 @@ in
   };
 
   programs = {
+    direnv = {
+      enable = true;
+      enableZshIntegration = true;
+      enableBashIntegration = true;
+      nix-direnv.enable = true;
+    };
+
     fastfetch.enable = true;
     gh.enable = true;
     btop = {
