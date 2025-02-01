@@ -15,14 +15,14 @@ in
 
   # Import Program Configurations
   imports = [
+    ../../home/git.nix
   ];
 
-  # Install & Configure Git
-  programs.git = {
-    enable = true;
-    userName = "${gitUsername}";
-    userEmail = "${gitEmail}";
-  };
+  # catppuccin = {
+  #   enable = true;
+  #   flavor = "mocha";
+  #   accent = "blue";
+  # };
 
   programs = {
     direnv = {

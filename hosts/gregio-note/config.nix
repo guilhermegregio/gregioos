@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, host, username, options, ... }:
+{ config, pkgs, host, username, options, inputs, ... }:
 let
   inherit (import ./variables.nix) stateVersion;
 in
@@ -124,6 +124,7 @@ in
     brave
     zed-editor
     kitty
+    inputs.zen-browser.packages.x86_64-linux.default
   ];
 
   environment.etc."interception/tab-to-esc.yaml".text = ''
