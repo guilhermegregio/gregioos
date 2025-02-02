@@ -111,6 +111,7 @@ in
     interception-tools
     interception-tools-plugins.dual-function-keys
     ngrok
+    ripgrep
 
     brave
     zed-editor
