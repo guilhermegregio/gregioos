@@ -11,7 +11,7 @@ in
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
-    enableCompletion = false;
+    enableCompletion = true;
 
     autocd = true;
     dotDir = ".config/zsh";
