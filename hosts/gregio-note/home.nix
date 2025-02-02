@@ -24,6 +24,19 @@ in
   #   accent = "blue";
   # };
 
+  # sessionPath = [
+  #   # "$HOME/go/bin"
+  #   "$HOME/.local/bin"
+  #   # "$HOME/.cargo/bin"
+  #   # "$HOME/.krew/bin"
+  # ];
+
+  # sessionVariables = {
+  #   EDITOR = "nvim";
+  #   VISUAL = "nvim";
+  #   NIXPKGS_ALLOW_UNFREE = "1";
+  # };
+
   programs = {
     direnv = {
       enable = true;
