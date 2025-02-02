@@ -10,6 +10,7 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware.nix
+      ./users.nix
     ];
 
   # Bootloader.
@@ -81,16 +82,6 @@ in
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.gregio = {
-    isNormalUser = true;
-    description = "gregio";
-    extraGroups = [ "networkmanager" "wheel" ];
-    packages = with pkgs; [
-    #  thunderbird
-    ];
-  };
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin.enable = true;
