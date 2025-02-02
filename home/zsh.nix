@@ -69,7 +69,7 @@ in
       }
       {
         name = "fzf-tab";
-        src = "${pkgs-zsh-fzf-tab.zsh-fzf-tab}/share/fzf-tab";
+        src = "${pkgs.zsh-fzf-tab}/share/fzf-tab";
       }
     ];
 
