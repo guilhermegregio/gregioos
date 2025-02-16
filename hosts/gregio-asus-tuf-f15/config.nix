@@ -113,10 +113,11 @@ in
     ngrok
     ripgrep
 
-    brave
+    ghostty
+
     zed-editor
-    wezterm
-    waveterm
+
+    brave
     inputs.zen-browser.packages.x86_64-linux.default
   ];
 
