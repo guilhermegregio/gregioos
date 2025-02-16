@@ -115,8 +115,8 @@ in
 
     brave
     zed-editor
-    kitty
     wezterm
+    waveterm
     inputs.zen-browser.packages.x86_64-linux.default
   ];
 
