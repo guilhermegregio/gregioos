@@ -17,7 +17,7 @@
     { nixpkgs, home-manager, ... }@inputs:
     let
       system = "aarch64-linux";
-      host = "gregio-note";
+      host = "gregio-asus-tuf-f15";
       username = "gregio";
     in
     {
