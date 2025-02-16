@@ -5,6 +5,7 @@
     ./zsh.nix
     ./fzf.nix
     ./starship.nix
+    ./wezterm.nix
     ./kitty.nix
   ];
 }
