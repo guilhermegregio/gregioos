@@ -111,6 +111,7 @@ in
     interception-tools
     interception-tools-plugins.dual-function-keys
     ngrok
+    infisical
     ripgrep
 
     ghostty
