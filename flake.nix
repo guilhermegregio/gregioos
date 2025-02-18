@@ -1,8 +1,3 @@
-let
-  currentConfig = if builtins.pathExists ./current.nix
-    then import ./current.nix
-    else {};
-in
 {
   description = "GregioOS";
 
@@ -21,6 +16,16 @@ in
   outputs =
     { nixpkgs, home-manager, ... }@inputs:
     let
+      defaultConfig = {
+        system = "aarch64-linux";
+        host = "gregio-asus-tuf-f15";
+        username = "gregio";
+      };
+
+      currentConfig = if builtins.pathExists ./current.nix
+        then import ./current.nix
+        else defaultConfig;
+
       system = currentConfig.system;
       host = currentConfig.host;
       username = currentConfig.username;
