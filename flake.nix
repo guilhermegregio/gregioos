@@ -1,3 +1,8 @@
+let
+  currentConfig = if builtins.pathExists ./current.nix
+    then import ./current.nix
+    else {};
+in
 {
   description = "GregioOS";
 
@@ -16,7 +21,9 @@
   outputs =
     { nixpkgs, home-manager, ... }@inputs:
     let
-      inherit (import ./current.nix) system host username;
+      system = currentConfig.system;
+      host = currentConfig.host;
+      username = currentConfig.username;
     in
     {
       nixosConfigurations = {
