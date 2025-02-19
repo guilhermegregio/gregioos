@@ -16,35 +16,22 @@
   outputs =
     { nixpkgs, home-manager, ... }@inputs:
     let
-      system = "aarch64-linux";
+      system = "x86_64-linux";
       host = "gregio-asus-tuf-f15";
       username = "gregio";
+      profile = "nvidia-laptop";
     in
     {
       nixosConfigurations = {
-        "${host}" = nixpkgs.lib.nixosSystem {
+        nvidia-laptop = nixpkgs.lib.nixosSystem {
+          inherit system;
           specialArgs = {
-       	    inherit system;
             inherit inputs;
             inherit username;
             inherit host;
+            inherit profile;
           };
-          modules = [
-            ./hosts/${host}/config.nix
-            inputs.stylix.nixosModules.stylix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.extraSpecialArgs = {
-                inherit username;
-                inherit inputs;
-                inherit host;
-              };
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.backupFileExtension = "backup";
-              home-manager.users.${username} = import ./hosts/${host}/home.nix;
-            }
-          ];
+          modules = [./profiles/nvidia-laptop];
         };
       };
     };
