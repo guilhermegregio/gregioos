@@ -1,13 +1,16 @@
 { ... }: {
   imports = [
-    ./git.nix
     ./bash.nix
-    ./zsh.nix
-    ./fzf.nix
+    ./btop.nix
+    ./direnv.nix
     ./fastfetch.nix
-    ./starship.nix
-    ./wezterm.nix
+    ./fzf.nix
+    ./gh.nix
+    ./git.nix
     ./kitty.nix
+    ./starship.nix
     ./stylix.nix
+    ./wezterm.nix
+    ./zsh.nix
   ];
 }

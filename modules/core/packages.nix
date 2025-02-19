@@ -1,20 +1,5 @@
 {pkgs, inputs, ...}: {
   programs = {
-    # gh.enable = true;
-
-    # direnv = {
-    #   enable = true;
-    #   enableZshIntegration = true;
-    #   enableBashIntegration = true;
-    #   nix-direnv.enable = true;
-    # };
-
-    # btop = {
-    #   enable = true;
-    #   settings = {
-    #     vim_keys = true;
-    #   };
-    # };
   };
 
   # programs = {
