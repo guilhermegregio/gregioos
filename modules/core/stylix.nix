@@ -31,10 +31,10 @@
     cursor.name = "Bibata-Modern-Ice";
     cursor.size = 24;
     fonts = {
-      # monospace = {
-      #   package = pkgs.nerdfonts.jet-brains-mono;
-      #   name = "JetBrainsMono Nerd Font Mono";
-      # };
+      monospace = {
+        package = pkgs.nerd-fonts.jetbrains-mono;
+        name = "JetBrainsMono Nerd Font Mono";
+      };
       sansSerif = {
         package = pkgs.montserrat;
         name = "Montserrat";
