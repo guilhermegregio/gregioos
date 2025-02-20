@@ -7,10 +7,12 @@
     ./fzf.nix
     ./gh.nix
     ./git.nix
-    ./kitty.nix
     ./starship.nix
     ./stylix.nix
-    ./wezterm.nix
     ./zsh.nix
+    # Terminals
+    ./kitty.nix
+    ./wezterm.nix
+    ./ghostty.nix
   ];
 }
