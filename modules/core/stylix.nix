@@ -26,7 +26,7 @@
       base0F = "00f769";
     };
     polarity = "dark";
-    opacity.terminal = 0.8;
+    opacity.terminal = 0.95;
     cursor.package = pkgs.bibata-cursors;
     cursor.name = "Bibata-Modern-Ice";
     cursor.size = 24;
