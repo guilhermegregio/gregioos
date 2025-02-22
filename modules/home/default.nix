@@ -1,6 +1,5 @@
 { ... }: {
   imports = [
-    ./bash.nix
     ./btop.nix
     ./direnv.nix
     ./fastfetch.nix
@@ -9,10 +8,13 @@
     ./git.nix
     ./starship.nix
     ./stylix.nix
-    ./zsh.nix
     # Terminals
     ./kitty.nix
     ./wezterm.nix
     ./ghostty.nix
+    #shells
+    ./bash.nix
+    ./zsh.nix
+    # ./nushell.nix
   ];
 }
