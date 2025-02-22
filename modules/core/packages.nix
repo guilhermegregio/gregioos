@@ -30,6 +30,7 @@
     wget
     eza
     git
+    tig
     htop
     bat
     nh
