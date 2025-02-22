@@ -16,5 +16,7 @@
     ./bash.nix
     ./zsh.nix
     # ./nushell.nix
+    # editors
+    ./helix.nix
   ];
 }

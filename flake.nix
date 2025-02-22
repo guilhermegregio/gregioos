@@ -13,15 +13,13 @@
     };
   };
 
-  outputs =
-    { nixpkgs, home-manager, ... }@inputs:
+  outputs = { nixpkgs, home-manager, ... }@inputs:
     let
       system = "x86_64-linux";
       host = "gregio-asus-tuf-f15";
       username = "gregio";
       profile = "nvidia-laptop";
-    in
-    {
+    in {
       nixosConfigurations = {
         nvidia-laptop = nixpkgs.lib.nixosSystem {
           inherit system;
@@ -31,7 +29,7 @@
             inherit host;
             inherit profile;
           };
-          modules = [./profiles/nvidia-laptop];
+          modules = [ ./profiles/nvidia-laptop ];
         };
       };
     };
