@@ -37,9 +37,6 @@
     infisical
     ripgrep
 
-    nix-output-monitor
-    nvd
-
     ghostty
 
     zed-editor
