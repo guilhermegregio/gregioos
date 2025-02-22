@@ -3,6 +3,7 @@
     ./btop.nix
     ./direnv.nix
     ./fastfetch.nix
+    ./nh.nix
     ./fzf.nix
     ./gh.nix
     ./git.nix
