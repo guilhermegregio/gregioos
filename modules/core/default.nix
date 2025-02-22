@@ -8,8 +8,10 @@
     ./fonts.nix
     ./hardware.nix
     ./network.nix
+    ./nh.nix
     ./packages.nix
     ./services.nix
+    ./starship.nix
     # ./steam.nix
     ./stylix.nix
     ./system.nix

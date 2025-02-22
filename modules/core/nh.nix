@@ -16,4 +16,9 @@
       flake = "/home/${username}/gregioos";
     };
   };
+
+  environment.systemPackages = with pkgs; [
+    nix-output-monitor
+    nvd
+  ];
 }
