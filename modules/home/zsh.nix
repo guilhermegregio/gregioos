@@ -1,9 +1,4 @@
-{
-  pkgs,
-  profile,
-  ...
-}:
-{
+{ pkgs, profile, ... }: {
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -12,8 +7,7 @@
     autocd = true;
     dotDir = ".config/zsh";
 
-    profileExtra = ''
-    '';
+    profileExtra = "";
 
     initExtra = ''
       fastfetch
@@ -29,12 +23,12 @@
     };
 
     shellAliases = {
-
       g = "git";
       sv = "sudo nvim";
       fr = "nh os switch --hostname ${profile}";
       fu = "nh os switch --hostname ${profile} --update";
-      ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+      ncg =
+        "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
 
       v = "nvim";
       cat = "bat";
