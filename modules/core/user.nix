@@ -36,7 +36,7 @@ in {
       "lp"
       "docker"
     ];
-    shell = pkgs.zsh;
+    shell = pkgs.nushell;
     ignoreShellProgramCheck = true;
     packages = with pkgs; [
     ];

@@ -4,19 +4,32 @@
       enable = true;
       package = pkgs.nushell;
 
+      extraConfig = ''
+        $env.config = {
+          show_banner: false
+        }
+
+        def ncg [] {
+            nix-collect-garbage --delete-old
+            sudo nix-collect-garbage -d
+            sudo /run/current-system/bin/switch-to-configuration boot
+        }
+      '';
+
       shellAliases = {
         g = "git";
+        v = "hx";
+        top = "btop";
+        htop = "btop";
+        cat = "bat";
+
         fr = "nh os switch --hostname ${profile}";
         fu = "nh os switch --hostname ${profile} --update";
-        ncg =
-          "nix-collect-garbage --delete-old and sudo nix-collect-garbage -d and sudo /run/current-system/bin/switch-to-configuration boot";
-        v = "hx";
-        cat = "bat";
+
+        l = "ls";
         ls = "eza --icons";
         ll = "eza -lh --icons --grid --group-directories-first";
         la = "eza -lah --icons --grid --group-directories-first";
-        top = "btop";
-        htop = "btop";
       };
     };
 
