@@ -12,11 +12,11 @@
     ./kitty.nix
     ./wezterm.nix
     ./ghostty.nix
-    #shells
+    # shells
     ./bash.nix
     ./zsh.nix
     ./nushell.nix
-    #
+    # terminal multiplexer
     ./zellij.nix
     # editors
     ./helix.nix
