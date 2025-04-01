@@ -5,8 +5,10 @@
     ./fastfetch.nix
     ./fzf.nix
     ./gh.nix
+    ./zoxide.nix
     ./git.nix
     ./starship.nix
+    ./dconf.nix
     ./stylix.nix
     # Terminals
     ./kitty.nix
@@ -20,5 +22,6 @@
     ./zellij.nix
     # editors
     ./helix.nix
+    ./zed.nix
   ];
 }

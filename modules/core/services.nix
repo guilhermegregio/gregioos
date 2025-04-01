@@ -1,10 +1,5 @@
-{
-  pkgs,
-  username,
-  host,
-  ...
-}: let
-  inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
+{ pkgs, username, host, ... }:
+let inherit (import ../../hosts/${host}/variables.nix) keyboardLayout;
 in {
   # Services to start
   services = {
@@ -15,17 +10,20 @@ in {
     # openssh.enable = true;
     # flatpak.enable = true;
     # blueman.enable = true;
+    hardware.bolt.enable = true;
 
     xserver = {
-      enable = false;
+      enable = true;
       xkb = {
         layout = keyboardLayout;
         variant = "intl";
+        options = "lv3:caps_switch";
       };
-      # Enable the GNOME 531910160010004Desktop Environment.
-      displayManager.gdm.enable = true;
-      desktopManager.gnome.enable = true;
+      videoDrivers = [ "modesetting" ];
     };
+
+    displayManager.gdm.enable = true;
+    desktopManager.gnome.enable = true;
 
     # greetd = {
     #   enable = true;
@@ -80,6 +78,8 @@ in {
     # Enable automatic login for the user.
     displayManager.autoLogin.enable = true;
     displayManager.autoLogin.user = "${username}";
+
+    tailscale.enable = true;
   };
 
   # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229

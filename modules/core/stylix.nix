@@ -6,7 +6,7 @@
   # Styling Options
   stylix = {
     enable = true;
-    image = ../../wallpapers/default.png;
+    image = ../../wallpapers/nix01.png;
     base16Scheme = {
       base00 = "282936";
       base01 = "3a3c4e";

@@ -1,15 +1,19 @@
-{ pkgs, profile, ... }: {
+{ pkgs, profile, config, ... }: {
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
     enableCompletion = true;
 
     autocd = true;
-    dotDir = ".config/zsh";
+    dotDir = "${config.xdg.configHome}/zsh";
 
     profileExtra = "";
 
-    initExtra = ''
+    initContent = ''
+      export PNPM_HOME=~/.pnpm
+      export PATH=$PATH:$PNPM_HOME
+      export PATH="$HOME/.local/bin:$PATH"
+
       fastfetch
     '';
 
@@ -31,7 +35,7 @@
         "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
 
       v = "nvim";
-      cat = "bat";
+      #cat = "bat";
       ls = "eza --icons";
       ll = "eza -lh --icons --grid --group-directories-first";
       la = "eza -lah --icons --grid --group-directories-first";

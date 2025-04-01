@@ -1,6 +1,5 @@
-{pkgs, inputs, ...}: {
-  programs = {
-  };
+{ pkgs, inputs, ... }: {
+  programs = { };
 
   # programs = {
   #   firefox.enable = false;
@@ -29,6 +28,7 @@
   environment.systemPackages = with pkgs; [
     wget
     eza
+    yazi
     git
     tig
     htop
@@ -37,13 +37,50 @@
     ngrok
     infisical
     ripgrep
+    ffmpeg
+    glow
+    xclip
+    fd
+    lsof
+    imagemagick
+    pdftk
+
+    postgresql_15
+
+    nodejs_24
+    pnpm
+    biome
+    flyctl
+    supabase-cli
 
     ghostty
 
     zed-editor
+    vscode
+    neovim
+
+    # Playwright com browsers inclusos
+    # auto-patchelf
+    # playwright-driver
+    # playwright-driver.browsers
 
     brave
+    chromium
     inputs.zen-browser.packages.x86_64-linux.default
+
+    linuxPackages.v4l2loopback
+    usbutils
+    pciutils
+    ddcutil
+
+    obs-studio
+
+    # Fontes essenciais para renderização
+    fontconfig
+    dejavu_fonts
+    freefont_ttf
+    noto-fonts
+    noto-fonts-color-emoji
   ];
 
   # environment.systemPackages = with pkgs; [

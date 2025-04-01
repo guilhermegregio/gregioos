@@ -6,15 +6,18 @@ let
   inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in
 {
+  programs.delta = {
+    enable = true;
+    enableGitIntegration = true;
+  };
+
   programs.git = {
     enable = true;
     lfs.enable = true;
-    delta.enable = true;
 
-    userName = "${gitUsername}";
-    userEmail = "${gitEmail}";
-
-    extraConfig = {
+    settings = {
+      user.name = gitUsername;
+      user.email = gitEmail;
       init.defaultBranch = "main";
       pull = {
         ff = false;
@@ -24,18 +27,17 @@ in
       fetch = { prune = true; };
       push.autoSetupRemote = true;
       delta = { line-numbers = true; };
-    };
-
-    aliases = {
-      c = "commit -am";
-      s = "status -s";
-      p = "push";
-      df = "diff --color --color-words --abbrev";
-      co = "checkout";
-      lg = "log --graph --pretty=format:'%Cred%h%Creset %Cgreen(%cr) %C(yellow)%d%Creset - %s %C(bold blue)<%an>%Creset'";
-      d = "!\"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat\"";
-      ignore = "!gi() { curl -L -s https://www.gitignore.io/api/$@ ;}; gi";
-      pb = "!\"git fetch --all -p; git branch -vv | grep \": gone]\" | awk '{ print $1 }' | xargs -n 1 git branch -D\"";
+      alias = {
+        c = "commit -am";
+        s = "status -s";
+        p = "push";
+        df = "diff --color --color-words --abbrev";
+        co = "checkout";
+        lg = "log --graph --pretty=format:'%Cred%h%Creset %Cgreen(%cr) %C(yellow)%d%Creset - %s %C(bold blue)<%an>%Creset'";
+        d = "!\"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat\"";
+        ignore = "!gi() { curl -L -s https://www.gitignore.io/api/$@ ;}; gi";
+        pb = "!\"git fetch --all -p; git branch -vv | grep \": gone]\" | awk '{ print $1 }' | xargs -n 1 git branch -D\"";
+      };
     };
 
     ignores = [
