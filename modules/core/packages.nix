@@ -44,6 +44,9 @@
     lsof
     imagemagick
     pdftk
+    gnumake42
+    jq
+    httpie
 
     postgresql_15
 

@@ -39,6 +39,7 @@ in {
     # Puppeteer
     # PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1";
     # PUPPETEER_EXECUTABLE_PATH = "${pkgs.chromium}/bin/chromium";
+    LESS = "-g -i -M -R -S -w -X";
   };
 
   qt.platformTheme = "gnome";
