@@ -31,10 +31,10 @@
     yazi
     git
     tig
-    htop
+    lazygit
     bat
     nh
-    ngrok
+    cloudflared
     infisical
     ripgrep
     ffmpeg

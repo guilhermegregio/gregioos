@@ -36,7 +36,7 @@ in
         lg = "log --graph --pretty=format:'%Cred%h%Creset %Cgreen(%cr) %C(yellow)%d%Creset - %s %C(bold blue)<%an>%Creset'";
         d = "!\"git diff-index --quiet HEAD -- || clear; git --no-pager diff --patch-with-stat\"";
         ignore = "!gi() { curl -L -s https://www.gitignore.io/api/$@ ;}; gi";
-        pb = "!\"git fetch --all -p; git branch -vv | grep \": gone]\" | awk '{ print $1 }' | xargs -n 1 git branch -D\"";
+        pb = "!\"git fetch --all -p && git branch -vv | rg -v '^\\*' | rg ': gone]' | awk '{ print $1 }' | xargs -r -n 1 git branch -D\"";
       };
     };
 
