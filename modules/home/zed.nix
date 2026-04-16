@@ -84,7 +84,7 @@
             language_server = {
               binary = {
                 path =
-                  "${pkgs.nodePackages.vscode-json-languageserver}/bin/vscode-json-languageserver";
+                  "${pkgs.vscode-langservers-extracted}/bin/vscode-json-languageserver";
                 path_lookup = true;
               };
             };

@@ -1,4 +1,6 @@
-{ pkgs, inputs, ... }: {
+{ pkgs, inputs, ... }:
+let notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
+in {
   programs = { };
 
   # programs = {
@@ -46,7 +48,10 @@
     pdftk
     gnumake42
     jq
+    yq
     httpie
+    notify-beep
+    steam-run
 
     postgresql_15
 

@@ -10,6 +10,7 @@
     ./starship.nix
     ./dconf.nix
     ./stylix.nix
+    ./nixpkgs.nix
     # Terminals
     ./kitty.nix
     ./wezterm.nix

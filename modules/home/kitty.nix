@@ -9,6 +9,9 @@
         wheel_scroll_min_lines = 1;
         window_padding_width = 4;
         confirm_os_window_close = 0;
+        notify_on_cmd_finish = "unfocused 10.0";
+        bell_on_tab = "🔔 ";
+        window_alert_on_bell = "yes";
       };
       extraConfig = ''
         tab_bar_style fade

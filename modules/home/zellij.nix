@@ -1,4 +1,28 @@
 { pkgs, ... }: {
+  xdg.configFile."zellij/layouts/ai-dev.kdl".text = ''
+    layout {
+        tab name="</>" hide_floating_panes=true {
+            pane size="50%"
+            pane size="50%"
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+        }
+        tab name="AI" hide_floating_panes=true {
+            pane
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+        }
+        new_tab_template {
+            pane
+            pane size=1 borderless=true {
+                plugin location="zellij:compact-bar"
+            }
+        }
+    }
+  '';
+
   programs = {
     zellij = {
       enable = true;
@@ -31,8 +55,12 @@
               ToggleFocusFullscreen = [ ];
               SwitchToMode = "Normal";
             };
-            "bind \"s\"" = {
+            "bind \"Ctrl s\"" = {
               ToggleActiveSyncTab = [ ];
+              SwitchToMode = "Normal";
+            };
+            "bind \"s\"" = {
+              LaunchOrFocusPlugin = "session-manager";
               SwitchToMode = "Normal";
             };
 

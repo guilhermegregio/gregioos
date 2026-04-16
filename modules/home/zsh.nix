@@ -35,6 +35,8 @@
         "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
 
       v = "nvim";
+      zed = "zeditor";
+      claude = "steam-run claude";
       #cat = "bat";
       ls = "eza --icons";
       ll = "eza -lh --icons --grid --group-directories-first";

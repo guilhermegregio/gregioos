@@ -1,6 +1,5 @@
 { pkgs, host, ... }:
-let
-  inherit (import ../../hosts/${host}/variables.nix) stateVersion;
+let inherit (import ../../hosts/${host}/variables.nix) stateVersion;
 in {
   nix = {
     settings = {
@@ -31,10 +30,12 @@ in {
     GREGIOOS_VERSION = "1.0";
     GREGIOOS = "true";
     EDITOR = "nvim";
+    VISUAL = "nvim";
     GIT_EDITOR = "nvim";
     # Playwright
-    # PLAYWRIGHT_BROWSERS_PATH = "${pkgs.playwright-driver.browsers}";
-    # PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
+    PLAYWRIGHT_BROWSERS_PATH =
+      "/nix/store/vq93n2wh2s3jb8x7wn29gvd1k0nd1l71-playwright-browsers";
+    PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = "true";
     # PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD = "1";
     # Puppeteer
     # PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "1";
