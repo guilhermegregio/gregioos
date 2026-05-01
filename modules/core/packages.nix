@@ -1,5 +1,7 @@
 { pkgs, inputs, ... }:
-let notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
+let
+  notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
+  wtree = import ../scripts/wtree.nix { inherit pkgs; };
 in {
   programs = { };
 
@@ -51,6 +53,7 @@ in {
     yq
     httpie
     notify-beep
+    wtree
     steam-run
 
     postgresql_15
