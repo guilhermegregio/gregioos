@@ -13,6 +13,7 @@
       export PNPM_HOME=~/.pnpm
       export PATH=$PATH:$PNPM_HOME
       export PATH="$HOME/.local/bin:$PATH"
+      export CLAUDE_CODE_NO_FLICKER=1
 
       fastfetch
     '';

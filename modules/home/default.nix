@@ -21,6 +21,7 @@
     ./nushell.nix
     # terminal multiplexer
     ./zellij.nix
+    ./tmux.nix
     # editors
     ./helix.nix
     ./zed.nix
