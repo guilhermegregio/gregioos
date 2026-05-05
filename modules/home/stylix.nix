@@ -5,4 +5,5 @@
   stylix.targets.hyprlock.enable = false;
   stylix.targets.zed.enable = false;
   stylix.targets.ghostty.enable = false;
+  stylix.targets.neovim.enable = false;
 }

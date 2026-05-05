@@ -36,6 +36,7 @@ in {
     git
     tig
     lazygit
+    gh-dash
     bat
     nh
     cloudflared
