@@ -4,6 +4,10 @@
       enable = true;
       package = pkgs.kitty;
 
+      keybindings = {
+        "shift+enter" = "send_text all \\x1b[13;2u";
+      };
+
       settings = {
         scrollback_lines = 2000;
         wheel_scroll_min_lines = 1;

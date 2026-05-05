@@ -4,4 +4,5 @@
   stylix.targets.hyprland.enable = false;
   stylix.targets.hyprlock.enable = false;
   stylix.targets.zed.enable = false;
+  stylix.targets.ghostty.enable = false;
 }

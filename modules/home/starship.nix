@@ -6,35 +6,60 @@
 
       settings = {
         add_newline = false;
+        command_timeout = 1000;
+        format = "$directory$character";
+        right_format = "$all";
+
+        character = {
+          success_symbol = "[➜](bold green)";
+          error_symbol = "[➜](bold red)";
+          vicmd_symbol = "[N] >>>";
+        };
+
         buf = {
-          symbol = " ";
+          symbol = " ";
         };
         c = {
-          symbol = " ";
+          symbol = " ";
         };
         directory = {
           read_only = " 󰌾";
         };
         docker_context = {
-          symbol = " ";
+          symbol = " ";
+          disabled = true;
         };
         fossil_branch = {
-          symbol = " ";
+          symbol = " ";
         };
         git_branch = {
-          symbol = " ";
+          symbol = " ";
+          format = "[$symbol$branch(:$remote_branch)]($style)";
+        };
+        git_status = {
+          ahead = " ";
+          behind = " ";
+          diverged = " ";
+          conflicted = "=";
+          deleted = "✗";
+          modified = "!";
+          renamed = "»";
+          staged = "+";
+          stashed = "$";
+          untracked = "?";
         };
         golang = {
-          symbol = " ";
+          symbol = " ";
+          format = "[ ](bold cyan)";
         };
         hg_branch = {
-          symbol = " ";
+          symbol = " ";
         };
         hostname = {
-          ssh_symbol = " ";
+          ssh_symbol = " ";
         };
         lua = {
-          symbol = " ";
+          symbol = " ";
         };
         memory_usage = {
           symbol = "󰍛 ";
@@ -46,28 +71,41 @@
           symbol = "󰆥 ";
         };
         nix_shell = {
-          symbol = " ";
+          symbol = " ";
         };
         nodejs = {
-          symbol = " ";
+          symbol = " ";
         };
         ocaml = {
-          symbol = " ";
+          symbol = " ";
         };
         package = {
           symbol = "󰏗 ";
         };
         python = {
-          symbol = " ";
+          symbol = " ";
         };
         rust = {
-          symbol = " ";
+          symbol = " ";
         };
         swift = {
-          symbol = " ";
+          symbol = " ";
         };
         zig = {
-          symbol = " ";
+          symbol = " ";
+        };
+
+        aws = {
+          format = "[$symbol(profile: \"$profile\" )(\\(region: $region\\) )]($style)";
+          disabled = false;
+          style = "bold blue";
+          symbol = " ";
+        };
+        kubernetes = {
+          symbol = "☸ ";
+          disabled = true;
+          detect_files = [ "Dockerfile" ];
+          format = "[$symbol$context( \\($namespace\\))]($style) ";
         };
       };
     };
