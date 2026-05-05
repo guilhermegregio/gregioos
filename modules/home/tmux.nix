@@ -20,7 +20,7 @@ in {
     blacklist = ["scratch"]
 
     [default_session]
-    startup_command = "nvim -c ':Telescope find_files'"
+    startup_command = "nvim -c 'lua Snacks.picker.files()'"
 
     [[session]]
     name = "gregioos"

@@ -1,13 +1,6 @@
 { config, lib, pkgs, ... }: {
-  programs.neovim = {
-    enable = true;
-    package = pkgs.neovim-unwrapped;
-    defaultEditor = true;
-    viAlias = true;
-    vimAlias = true;
-  };
-
   home.packages = with pkgs; [
+    neovim
     gcc
     gnumake
     unzip
@@ -15,6 +8,16 @@
     luajit
     python3
   ];
+
+  home.sessionVariables = {
+    EDITOR = "nvim";
+    VISUAL = "nvim";
+  };
+
+  home.shellAliases = {
+    vi = "nvim";
+    vim = "nvim";
+  };
 
   home.activation.linkNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
     NVIM_SRC="${config.home.homeDirectory}/gregioos/modules/home/nvim"
