@@ -68,7 +68,6 @@ in {
 
     zed-editor
     vscode
-    neovim
 
     # Playwright com browsers inclusos
     # auto-patchelf

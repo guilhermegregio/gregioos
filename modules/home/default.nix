@@ -25,5 +25,6 @@
     # editors
     ./helix.nix
     ./zed.nix
+    ./nvim.nix
   ];
 }

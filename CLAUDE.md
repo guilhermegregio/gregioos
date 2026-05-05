@@ -56,3 +56,7 @@ Cada host define variáveis em `hosts/<host>/variables.nix` (terminal, browser, 
 ## Convenções de commit
 
 Prefixos: `feat:`, `fix:`, `chore:`
+
+## Referências
+
+- **Tmux + sesh**: configuração inspirada em <https://github.com/omerxx/dotfiles> (plugin: <https://github.com/omerxx/catppuccin-tmux>). Ao editar `modules/home/tmux.nix`, preservar os separadores powerline rounded — U+E0B6 (``) e U+E0B4 (``) — exigem Nerd Font (já configurada via stylix com JetBrainsMono Nerd Font Mono).
