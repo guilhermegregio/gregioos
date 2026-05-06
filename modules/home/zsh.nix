@@ -91,7 +91,7 @@
         dotExpansion = true;
         keymap = "vi";
       };
-      pmodules = [ "autosuggestions" "directory" "editor" "git" "terminal" ];
+      pmodules = [ "autosuggestions" "completion" "directory" "editor" "git" "terminal" ];
     };
   };
 }
