@@ -128,6 +128,7 @@ in {
       bind / switch-client -l
       bind Space run-shell "notify-jump"
       bind C-Space display-popup -E -w 80% -h 70% "notify-pick"
+      bind S setw synchronize-panes \; display-message "sync-panes: #{?pane_synchronized,ON,OFF}"
 
       is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
         | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"

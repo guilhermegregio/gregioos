@@ -16,9 +16,12 @@ decidirmos remover.
 | `prefix -` | Split horizontal (preserva cwd) |
 | `prefix x` | Mata o painel atual (sem confirmação) |
 | `prefix z` | Zoom toggle no painel atual |
-| `prefix space` | Cicla layouts (even-h, even-v, main-h, main-v, tiled) |
+| `prefix S` | Toggle `synchronize-panes` (digita em todos os painéis) |
 | `prefix {` / `}` | Move painel para esquerda/direita |
 | `prefix !` | Move painel para janela própria |
+
+> Nota: `prefix space` (default = cicla layouts) foi reassociado a
+> `notify-jump` — ver [Notificações / fila de alertas](#notificações--fila-de-alertas).
 
 ### Navegação vim-aware (sem prefix!)
 
@@ -111,11 +114,11 @@ Scrollback = 1.000.000 linhas (suficiente para diff longo do Claude).
 
 ## tmux-thumbs (hint mode estilo vimium)
 
-| Atalho | Ação |
-|---|---|
-| `prefix space` (default do thumbs varia) | Mostra hints sobre tokens (paths, hashes, URLs); digite as letras para copiar |
+Mostra hints sobre tokens (paths, hashes, URLs); digite as letras para copiar.
 
-Verificar `prefix ?` para mapeamento exato no seu build.
+O bind default (`prefix space`) foi reassociado a `notify-jump`. Para usar
+thumbs, verifique o mapeamento atual com `prefix ?` ou rebinde explicitamente
+em `tmux.nix`.
 
 ## tmux-fzf (menu universal)
 
@@ -151,6 +154,34 @@ Snapshots em `~/.local/share/tmux/resurrect/`.
 
 Útil para auditoria de sessões com Claude Code. `display-message` mostra
 qual painel está logando.
+
+## Notificações / fila de alertas
+
+Sistema de fila de alertas integrado com `notify-beep --queue` (NixOS package).
+Quando o Claude Code dispara o hook `Notification`/`Stop`, grava um entry em
+`~/.local/state/notify-beep/queue.jsonl` com a session/window/pane atual.
+
+| Atalho | Ação |
+|---|---|
+| `prefix Space` | **`notify-jump`** — salta direto para o último alerta `unread` do host atual; marca como `read` |
+| `prefix Ctrl-Space` | **`notify-pick`** — popup fzf 80%×70% com todas as notificações ordenadas por data; Enter = switch + marca read |
+
+Status no picker: 🔴 unread · 👀 read · 💀 dead (session/window foi fechada).
+Se o pane alvo morreu, a entry é marcada `dead` e o atalho mostra
+`display-message` em vez de saltar.
+
+### Comandos relacionados
+
+```sh
+notify-beep --queue --title "⚠️ Permissão" "aprovação"   # enfileira manualmente
+notify-jump                                              # mesma coisa que prefix+Space
+notify-jump --id <ID>                                    # salta para entry específico
+notify-pick                                              # mesma coisa que prefix+Ctrl+Space
+cat ~/.local/state/notify-beep/queue.jsonl              # inspeção crua
+```
+
+Hooks do Claude Code já configurados em `~/.claude/settings.json` (eventos
+`Notification` com matchers `permission_prompt`/`idle_prompt` e `Stop`).
 
 ## Status bar
 

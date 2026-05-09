@@ -24,7 +24,7 @@ pkgs.writeShellApplication {
     THUMB_DIR=$(mktemp -d -t fd-videos.XXXXXX)
     trap 'rm -rf "$THUMB_DIR"' EXIT
 
-    fd -e mp4 -e mov -e mkv -e webm -e avi -e m4v . "$DIR" | \
+    fd --no-ignore --hidden -e mp4 -e mov -e mkv -e webm -e avi -e m4v . "$DIR" | \
       fzf --preview "ffmpegthumbnailer -i {} -o $THUMB_DIR/thumb.png -s 400 2>/dev/null && chafa $THUMB_DIR/thumb.png" \
           --preview-window 'right:60%' \
           --bind 'enter:execute(ffplay -autoexit -loop 0 -window_title {} {})'
