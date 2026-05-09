@@ -17,6 +17,7 @@ pkgs.writeShellApplication {
   runtimeInputs = with pkgs; [
     bash
     nodejs
+    jq
   ] ++ platformInputs;
 
   text = ''
@@ -25,6 +26,7 @@ pkgs.writeShellApplication {
     do_beep=true
     do_ntfy=true
     do_echo=true
+    do_queue=false
     custom_title=""
 
     usage() {
@@ -35,13 +37,15 @@ flags (todas combináveis):
   --title TXT  título da notificação (default: "Claude Code")
   --no-beep    desabilita o som local
   --no-ntfy    desabilita o push pro ntfy.sh
+  --queue      enfileira o alerta em ~/.local/state/notify-beep/queue.jsonl
+               para uso com notify-jump (prefix+Space no tmux)
   -h, --help   mostra esta ajuda
 
 o contexto (tmux/zellij/cmux) e o hostname são anexados no body da
 notificação, não no título.
 
 exemplo:
-  notify-beep --title "🔔 🤖 Claude Code - permission" "preciso de aprovação"
+  notify-beep --queue --title "🔔 🤖 Claude Code - permission" "preciso de aprovação"
 EOF
     }
 
@@ -51,6 +55,7 @@ EOF
         --title=*) custom_title="''${1#--title=}"; shift ;;
         --no-beep) do_beep=false; shift ;;
         --no-ntfy) do_ntfy=false; shift ;;
+        --queue)   do_queue=true; shift ;;
         --help|-h) usage; exit 0 ;;
         --)        shift; break ;;
         *)
@@ -68,9 +73,15 @@ EOF
     # --- Contexto do multiplexador de terminal ---
     CONTEXT=""
 
+    TMUX_SESSION=""
+    TMUX_WINDOW=""
+    TMUX_WINDOW_IDX=""
+    TMUX_PANE_IDX=""
+
     if [ -n "''${TMUX:-}" ] && command -v tmux > /dev/null 2>&1; then
       TMUX_SESSION="$(tmux display-message -p '#S')"
       TMUX_WINDOW="$(tmux display-message -p '#W')"
+      TMUX_WINDOW_IDX="$(tmux display-message -p '#I')"
       TMUX_PANE_IDX="$(tmux display-message -p '#P')"
       CONTEXT="tmux · sessão: $TMUX_SESSION · janela: $TMUX_WINDOW · painel: $TMUX_PANE_IDX"
     elif [ -n "''${ZELLIJ:-}" ]; then
@@ -123,6 +134,40 @@ EOF
           }),
         }).then(r => process.exit(r.ok ? 0 : 1));
       " &
+    fi
+
+    # --- Fila persistente (opt-in via --queue) ---
+    if $do_queue && [ -n "''${TMUX:-}" ]; then
+      QUEUE_DIR="''${XDG_STATE_HOME:-$HOME/.local/state}/notify-beep"
+      mkdir -p "$QUEUE_DIR"
+      QUEUE_FILE="$QUEUE_DIR/queue.jsonl"
+
+      ENTRY_TS="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+      ENTRY_HOST="$(hostname)"
+      ENTRY_ID="$(date +%s%N)-$$"
+
+      jq -c -n \
+        --arg id          "$ENTRY_ID" \
+        --arg ts          "$ENTRY_TS" \
+        --arg host        "$ENTRY_HOST" \
+        --arg session     "$TMUX_SESSION" \
+        --arg window      "$TMUX_WINDOW" \
+        --arg window_idx  "$TMUX_WINDOW_IDX" \
+        --arg pane        "$TMUX_PANE_IDX" \
+        --arg title       "$TITLE" \
+        --arg message     "$MESSAGE" \
+        '{
+          id: $id,
+          ts: $ts,
+          host: $host,
+          session: $session,
+          window: $window,
+          window_idx: ($window_idx | tonumber),
+          pane: ($pane | tonumber),
+          title: $title,
+          message: $message,
+          status: "unread"
+        }' >> "$QUEUE_FILE"
     fi
 
     if $do_echo; then

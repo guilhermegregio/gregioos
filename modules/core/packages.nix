@@ -1,6 +1,8 @@
 { pkgs, inputs, ... }:
 let
   notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
+  notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; };
+  notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; };
   wtree = import ../scripts/wtree.nix { inherit pkgs; };
   fd-videos = import ../scripts/fd-videos.nix { inherit pkgs; };
 in {
@@ -55,6 +57,8 @@ in {
     yq
     httpie
     notify-beep
+    notify-jump
+    notify-pick
     wtree
     fd-videos
     steam-run

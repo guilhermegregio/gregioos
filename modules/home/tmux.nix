@@ -126,6 +126,8 @@ in {
       bind - split-window -v -c "#{pane_current_path}"
       bind x kill-pane
       bind / switch-client -l
+      bind Space run-shell "notify-jump"
+      bind C-Space display-popup -E -w 80% -h 70% "notify-pick"
 
       is_vim="ps -o state= -o comm= -t '#{pane_tty}' \
         | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|l?n?vim?x?|fzf)(diff)?$'"
