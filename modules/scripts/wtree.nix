@@ -18,16 +18,18 @@ pkgs.writeShellApplication {
     BASE="main"
     USE_EXISTING=false
     FORCE=false
+    MULTIPLEXER=""
 
     print_usage() {
       cat <<'HELP'
-    uso: wtree <branch> [opcoes]            # cria worktree + sessao zellij
+    uso: wtree <branch> [opcoes]            # cria worktree + sessao no multiplexer
          wtree --rm <branch> [-f]           # remove worktree, branch e sessao
 
     Cria um git worktree em ~/code/worktrees/<repo>-<branch>, copia
     qualquer .env* (.envrc, .env, .env.local, .env.production, .env.staging,
-    etc.), roda direnv allow + pnpm install e abre sessao zellij com a
-    tab AI ja rodando claude.
+    etc.), roda direnv allow + pnpm install e abre sessao no multiplexer
+    (auto-detect via $TMUX/$ZELLIJ; default tmux) com a tab AI ja rodando
+    claude.
 
     Modo create (default):
       --base <branch>   Branch base ao criar nova (default: main)
@@ -38,6 +40,8 @@ pkgs.writeShellApplication {
       -f, --force       Forca git worktree remove -f e git branch -D
 
     Outros:
+      --tmux            Forca uso de tmux (override do auto-detect)
+      --zellij          Forca uso de zellij (override do auto-detect)
       -h, --help        Mostra este help
     HELP
     }
@@ -62,6 +66,22 @@ pkgs.writeShellApplication {
           ;;
         -f|--force)
           FORCE=true
+          shift
+          ;;
+        --tmux)
+          if [[ -n "$MULTIPLEXER" && "$MULTIPLEXER" != "tmux" ]]; then
+            echo "wtree: --tmux conflita com --zellij" >&2
+            exit 2
+          fi
+          MULTIPLEXER="tmux"
+          shift
+          ;;
+        --zellij)
+          if [[ -n "$MULTIPLEXER" && "$MULTIPLEXER" != "zellij" ]]; then
+            echo "wtree: --zellij conflita com --tmux" >&2
+            exit 2
+          fi
+          MULTIPLEXER="zellij"
           shift
           ;;
         -h|--help)
@@ -94,6 +114,16 @@ pkgs.writeShellApplication {
       exit 2
     fi
 
+    if [[ -z "$MULTIPLEXER" ]]; then
+      if [[ -n "''${TMUX:-}" ]]; then
+        MULTIPLEXER="tmux"
+      elif [[ -n "''${ZELLIJ:-}" ]]; then
+        MULTIPLEXER="zellij"
+      else
+        MULTIPLEXER="tmux"
+      fi
+    fi
+
     REPO_NAME=$(basename "$SOURCE_ROOT")
     SAFE_BRANCH="''${BRANCH//\//-}"
     WORKTREE_BASE="$HOME/code/worktrees"
@@ -107,7 +137,8 @@ pkgs.writeShellApplication {
         exit 2
       fi
 
-      echo "==> kill + delete sessao zellij '$SESSION_NAME'"
+      echo "==> kill sessao do multiplexer '$SESSION_NAME'"
+      tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
       zellij kill-session "$SESSION_NAME" >/dev/null 2>&1 || true
       zellij delete-session "$SESSION_NAME" >/dev/null 2>&1 || true
 
@@ -141,7 +172,7 @@ pkgs.writeShellApplication {
         fi
       fi
 
-      echo "==> pronto. worktree, branch e sessao zellij removidos"
+      echo "==> pronto. worktree, branch e sessao do multiplexer removidos"
       exit 0
     fi
 
@@ -185,39 +216,61 @@ pkgs.writeShellApplication {
       (cd "$WORKTREE_DIR" && pnpm install)
     fi
 
-    LAYOUT_FILE="$HOME/.config/zellij/layouts/wtree.kdl"
-    if [[ ! -f "$LAYOUT_FILE" ]]; then
-      echo "wtree: layout nao encontrado em $LAYOUT_FILE" >&2
-      echo "wtree: rebuilde o sistema (nixos-rebuild switch) para gerar." >&2
-      exit 1
-    fi
-
-    echo "==> abrindo zellij sessao $SESSION_NAME"
     cd "$WORKTREE_DIR"
 
-    if [[ -n "''${ZELLIJ:-}" ]]; then
-      # zellij precisa de TTY: usa script(1) como pty falso e setsid pra
-      # destacar do terminal atual. A sessao roda detached em background
-      # ate o switch-session abaixo "puxar" o cliente pra ela.
-      # PTY generoso (300x100) pra sessao nao iniciar pequena. zellij
-      # reajusta pro tamanho real do terminal externo automaticamente
-      # quando o client conecta via switch-session.
-      setsid -f script -qfec \
-        "stty rows 100 cols 300; zellij --session '$SESSION_NAME' --new-session-with-layout '$LAYOUT_FILE'" \
-        /dev/null </dev/null >/dev/null 2>&1 || true
+    if [[ "$MULTIPLEXER" == "tmux" ]]; then
+      echo "==> abrindo tmux sessao $SESSION_NAME"
 
-      # esperar a sessao aparecer no list-sessions (max ~3s)
-      for _ in $(seq 1 30); do
-        if zellij list-sessions -s 2>/dev/null | grep -qx "$SESSION_NAME"; then
-          break
-        fi
-        sleep 0.1
-      done
+      if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
+        echo "wtree: sessao tmux '$SESSION_NAME' ja existe — anexando"
+      else
+        tmux new-session -d -s "$SESSION_NAME" -n "code" -c "$WORKTREE_DIR"
+        tmux split-window -h -t "$SESSION_NAME:code" -c "$WORKTREE_DIR"
+        tmux select-pane -t "$SESSION_NAME:code.1"
 
-      echo "==> switch-session $SESSION_NAME"
-      zellij action switch-session "$SESSION_NAME"
+        tmux new-window -t "$SESSION_NAME" -n "AI" -c "$WORKTREE_DIR" "zsh -ic claude"
+        tmux select-window -t "$SESSION_NAME:AI"
+      fi
+
+      if [[ -n "''${TMUX:-}" ]]; then
+        tmux switch-client -t "$SESSION_NAME"
+      else
+        exec tmux attach -t "$SESSION_NAME"
+      fi
     else
-      exec zellij --session "$SESSION_NAME" --new-session-with-layout "$LAYOUT_FILE"
+      LAYOUT_FILE="$HOME/.config/zellij/layouts/wtree.kdl"
+      if [[ ! -f "$LAYOUT_FILE" ]]; then
+        echo "wtree: layout nao encontrado em $LAYOUT_FILE" >&2
+        echo "wtree: rebuilde o sistema (nixos-rebuild switch) para gerar." >&2
+        exit 1
+      fi
+
+      echo "==> abrindo zellij sessao $SESSION_NAME"
+
+      if [[ -n "''${ZELLIJ:-}" ]]; then
+        # zellij precisa de TTY: usa script(1) como pty falso e setsid pra
+        # destacar do terminal atual. A sessao roda detached em background
+        # ate o switch-session abaixo "puxar" o cliente pra ela.
+        # PTY generoso (300x100) pra sessao nao iniciar pequena. zellij
+        # reajusta pro tamanho real do terminal externo automaticamente
+        # quando o client conecta via switch-session.
+        setsid -f script -qfec \
+          "stty rows 100 cols 300; zellij --session '$SESSION_NAME' --new-session-with-layout '$LAYOUT_FILE'" \
+          /dev/null </dev/null >/dev/null 2>&1 || true
+
+        # esperar a sessao aparecer no list-sessions (max ~3s)
+        for _ in $(seq 1 30); do
+          if zellij list-sessions -s 2>/dev/null | grep -qx "$SESSION_NAME"; then
+            break
+          fi
+          sleep 0.1
+        done
+
+        echo "==> switch-session $SESSION_NAME"
+        zellij action switch-session "$SESSION_NAME"
+      else
+        exec zellij --session "$SESSION_NAME" --new-session-with-layout "$LAYOUT_FILE"
+      fi
     fi
   '';
 }

@@ -2,6 +2,7 @@
 let
   notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
   wtree = import ../scripts/wtree.nix { inherit pkgs; };
+  fd-videos = import ../scripts/fd-videos.nix { inherit pkgs; };
 in {
   programs = { };
 
@@ -55,6 +56,7 @@ in {
     httpie
     notify-beep
     wtree
+    fd-videos
     steam-run
 
     postgresql_15
