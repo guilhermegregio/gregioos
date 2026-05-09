@@ -3,6 +3,7 @@ let
   notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
   notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; };
   notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; };
+  notify-remove = import ../scripts/notify-remove.nix { inherit pkgs; };
   wtree = import ../scripts/wtree.nix { inherit pkgs; };
   fd-videos = import ../scripts/fd-videos.nix { inherit pkgs; };
 in {
@@ -59,6 +60,7 @@ in {
     notify-beep
     notify-jump
     notify-pick
+    notify-remove
     wtree
     fd-videos
     steam-run
