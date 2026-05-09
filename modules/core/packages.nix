@@ -57,6 +57,7 @@ in {
     jq
     yq
     httpie
+    television
     notify-beep
     notify-jump
     notify-pick
