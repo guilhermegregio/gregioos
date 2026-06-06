@@ -89,6 +89,7 @@ in {
     brave
     chromium
     inputs.zen-browser.packages.x86_64-linux.default
+    inputs.herdr.packages.x86_64-linux.default
 
     linuxPackages.v4l2loopback
     usbutils
