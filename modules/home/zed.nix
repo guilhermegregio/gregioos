@@ -1,5 +1,5 @@
 { pkgs, lib, ... }: {
-  home.packages = with pkgs; [ nixd nil nixfmt-classic ];
+  home.packages = with pkgs; [ nixd nil nixfmt ];
 
   programs = {
     zed-editor = {
@@ -61,7 +61,7 @@
           nil = {
             initialization_options = {
               formatting = {
-                command = [ "${pkgs.nixfmt-classic}/bin/nixfmt" ];
+                command = [ "${pkgs.nixfmt}/bin/nixfmt" ];
               };
             };
           };
@@ -77,7 +77,7 @@
             language_servers =
               [ "${pkgs.nixd}/bin/nixd" "${pkgs.nil}/bin/nil" ];
             format_on_save = {
-              external = { command = "${pkgs.nixfmt-classic}/bin/nixfmt"; };
+              external = { command = "${pkgs.nixfmt}/bin/nixfmt"; };
             };
           };
           json = {

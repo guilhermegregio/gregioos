@@ -4,6 +4,7 @@ let
   notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; };
   notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; };
   notify-remove = import ../scripts/notify-remove.nix { inherit pkgs; };
+  claude-notify = import ../scripts/claude-notify.nix { inherit pkgs; };
   wtree = import ../scripts/wtree.nix { inherit pkgs; };
   fd-videos = import ../scripts/fd-videos.nix { inherit pkgs; };
 in {
@@ -62,6 +63,7 @@ in {
     notify-jump
     notify-pick
     notify-remove
+    claude-notify
     wtree
     fd-videos
     steam-run

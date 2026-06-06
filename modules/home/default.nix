@@ -1,4 +1,5 @@
-{ ... }: {
+{ ... }:
+{
   imports = [
     ./btop.nix
     ./direnv.nix
@@ -26,5 +27,6 @@
     ./helix.nix
     ./zed.nix
     ./nvim.nix
+    ./obs-studio.nix
   ];
 }
