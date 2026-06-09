@@ -10,6 +10,7 @@ pkgs.writeShellApplication {
     coreutils
     findutils
     util-linux
+    jq
   ];
 
   text = ''
@@ -28,8 +29,9 @@ pkgs.writeShellApplication {
     Cria um git worktree em ~/code/worktrees/<repo>-<branch>, copia
     qualquer .env* (.envrc, .env, .env.local, .env.production, .env.staging,
     etc.), roda direnv allow + pnpm install e abre sessao no multiplexer
-    (auto-detect via $TMUX/$ZELLIJ; default tmux) com a tab AI ja rodando
-    claude.
+    (auto-detect via $TMUX/$ZELLIJ/$HERDR_ENV; default tmux) com a tab AI
+    ja rodando claude. No herdr abre um workspace agrupado ao repo pai
+    (tab code com split + tab AI).
 
     Modo create (default):
       --base <branch>   Branch base ao criar nova (default: main)
@@ -42,6 +44,7 @@ pkgs.writeShellApplication {
     Outros:
       --tmux            Forca uso de tmux (override do auto-detect)
       --zellij          Forca uso de zellij (override do auto-detect)
+      --herdr           Forca uso de herdr (override do auto-detect)
       -h, --help        Mostra este help
     HELP
     }
@@ -68,20 +71,13 @@ pkgs.writeShellApplication {
           FORCE=true
           shift
           ;;
-        --tmux)
-          if [[ -n "$MULTIPLEXER" && "$MULTIPLEXER" != "tmux" ]]; then
-            echo "wtree: --tmux conflita com --zellij" >&2
+        --tmux|--zellij|--herdr)
+          want="''${1#--}"
+          if [[ -n "$MULTIPLEXER" && "$MULTIPLEXER" != "$want" ]]; then
+            echo "wtree: --$want conflita com --$MULTIPLEXER" >&2
             exit 2
           fi
-          MULTIPLEXER="tmux"
-          shift
-          ;;
-        --zellij)
-          if [[ -n "$MULTIPLEXER" && "$MULTIPLEXER" != "zellij" ]]; then
-            echo "wtree: --zellij conflita com --tmux" >&2
-            exit 2
-          fi
-          MULTIPLEXER="zellij"
+          MULTIPLEXER="$want"
           shift
           ;;
         -h|--help)
@@ -119,6 +115,8 @@ pkgs.writeShellApplication {
         MULTIPLEXER="tmux"
       elif [[ -n "''${ZELLIJ:-}" ]]; then
         MULTIPLEXER="zellij"
+      elif [[ "''${HERDR_ENV:-}" == "1" ]]; then
+        MULTIPLEXER="herdr"
       else
         MULTIPLEXER="tmux"
       fi
@@ -141,6 +139,15 @@ pkgs.writeShellApplication {
       tmux kill-session -t "$SESSION_NAME" 2>/dev/null || true
       zellij kill-session "$SESSION_NAME" >/dev/null 2>&1 || true
       zellij delete-session "$SESSION_NAME" >/dev/null 2>&1 || true
+
+      # herdr: fecha so o estado do workspace (nunca mexe no git)
+      ws_id=$(herdr workspace list 2>/dev/null \
+        | jq -r --arg l "$SESSION_NAME" \
+            '.result.workspaces[] | select(.label == $l) | .workspace_id' 2>/dev/null \
+        | head -n1) || true
+      if [[ -n "''${ws_id:-}" ]]; then
+        herdr workspace close "$ws_id" >/dev/null 2>&1 || true
+      fi
 
       if [[ -d "$WORKTREE_DIR" ]]; then
         echo "==> git worktree remove $WORKTREE_DIR"
@@ -172,7 +179,7 @@ pkgs.writeShellApplication {
         fi
       fi
 
-      echo "==> pronto. worktree, branch e sessao do multiplexer removidos"
+      echo "==> pronto. worktree, branch e sessao/workspace do multiplexer removidos"
       exit 0
     fi
 
@@ -236,6 +243,38 @@ pkgs.writeShellApplication {
         tmux switch-client -t "$SESSION_NAME"
       else
         exec tmux attach -t "$SESSION_NAME"
+      fi
+    elif [[ "$MULTIPLEXER" == "herdr" ]]; then
+      echo "==> abrindo herdr workspace $SESSION_NAME"
+
+      # worktree open e idempotente: abre o checkout existente como workspace
+      # agrupado ao repo pai, ou retorna o workspace ja aberto
+      RESP=$(herdr worktree open --cwd "$SOURCE_ROOT" --path "$WORKTREE_DIR" \
+        --label "$SESSION_NAME" --no-focus --json)
+      WS_ID=$(jq -r '.result.workspace.workspace_id // empty' <<<"$RESP")
+      TAB_ID=$(jq -r '.result.tab.tab_id // empty' <<<"$RESP")
+      ROOT_PANE=$(jq -r '.result.root_pane.pane_id // empty' <<<"$RESP")
+
+      if [[ -z "$WS_ID" || -z "$TAB_ID" || -z "$ROOT_PANE" ]]; then
+        echo "wtree: resposta inesperada do herdr worktree open:" >&2
+        echo "    $RESP" >&2
+        exit 1
+      fi
+
+      herdr tab rename "$TAB_ID" "code" >/dev/null
+      herdr pane split "$ROOT_PANE" --direction right --no-focus >/dev/null
+
+      AI_RESP=$(herdr tab create --workspace "$WS_ID" --cwd "$WORKTREE_DIR" \
+        --label "AI" --no-focus)
+      AI_TAB=$(jq -r '.result.tab.tab_id // empty' <<<"$AI_RESP")
+      AI_PANE=$(jq -r '.result.root_pane.pane_id // empty' <<<"$AI_RESP")
+      if [[ -n "$AI_PANE" ]]; then
+        herdr pane run "$AI_PANE" "claude"
+      fi
+
+      herdr workspace focus "$WS_ID" >/dev/null
+      if [[ -n "$AI_TAB" ]]; then
+        herdr tab focus "$AI_TAB" >/dev/null
       fi
     else
       LAYOUT_FILE="$HOME/.config/zellij/layouts/wtree.kdl"
