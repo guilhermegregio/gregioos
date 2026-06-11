@@ -161,6 +161,10 @@ Sistema de fila de alertas integrado com `notify-beep --queue` (NixOS package).
 Quando o Claude Code dispara o hook `Notification`/`Stop`, grava um entry em
 `~/.local/state/notify-beep/queue.jsonl` com a session/window/pane atual.
 
+> A fila é multi-mux: entries têm campo `mux` (`tmux`/`herdr`) e convivem no
+> mesmo arquivo. Para o lado herdr (toast nativo, `prefix+Space`/`prefix+Shift+Space`,
+> handle por `terminal_id`), ver [docs/herdr.md](./herdr.md).
+
 | Atalho | Ação |
 |---|---|
 | `prefix Space` | **`notify-jump`** — salta direto para o último alerta `unread` do host atual; marca como `read` |

@@ -1,8 +1,9 @@
 { pkgs, inputs, ... }:
 let
-  notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; };
-  notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; };
-  notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; };
+  herdrPkg = inputs.herdr.packages.x86_64-linux.default;
+  notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; herdr = herdrPkg; };
+  notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; herdr = herdrPkg; };
+  notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; herdr = herdrPkg; };
   notify-remove = import ../scripts/notify-remove.nix { inherit pkgs; };
   claude-notify = import ../scripts/claude-notify.nix { inherit pkgs; };
   wtree = import ../scripts/wtree.nix { inherit pkgs; };
@@ -89,7 +90,7 @@ in {
     brave
     chromium
     inputs.zen-browser.packages.x86_64-linux.default
-    inputs.herdr.packages.x86_64-linux.default
+    herdrPkg
 
     linuxPackages.v4l2loopback
     usbutils

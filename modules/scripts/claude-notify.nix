@@ -23,6 +23,7 @@ pkgs.writeShellApplication {
 
     TITLE=""
     BODY=""
+    SOUND="done"
 
     case "$EVENT" in
       Stop)
@@ -45,6 +46,7 @@ pkgs.writeShellApplication {
         NMSG="$(jq -r '.message // "aguardando aprovação"' <<<"$INPUT")"
         TITLE="⚠️ [$LABEL] permissão"
         BODY="$NMSG"
+        SOUND="request"
         ;;
 
       *)
@@ -52,6 +54,6 @@ pkgs.writeShellApplication {
         ;;
     esac
 
-    notify-beep --queue --title "$TITLE" "$BODY"
+    notify-beep --queue --sound "$SOUND" --title "$TITLE" "$BODY"
   '';
 }

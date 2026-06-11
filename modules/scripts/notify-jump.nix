@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {}, herdr ? null }:
 
 pkgs.writeShellApplication {
   name = "notify-jump";
@@ -9,7 +9,7 @@ pkgs.writeShellApplication {
     jq
     tmux
     util-linux # flock
-  ];
+  ] ++ pkgs.lib.optionals (herdr != null) [ herdr ];
 
   text = ''
     QUEUE_DIR="''${XDG_STATE_HOME:-$HOME/.local/state}/notify-beep"
@@ -40,9 +40,15 @@ EOF
       esac
     done
 
+    # keys.command type=shell do herdr pode não exportar HERDR_ENV pro filho,
+    # então tenta o toast direto e cai pro stderr se o socket não responder.
     notify() {
       if [ -n "''${TMUX:-}" ]; then
         tmux display-message "$1"
+      elif command -v herdr > /dev/null 2>&1 \
+        && herdr notification show "notify-jump" --body "$1" --sound none \
+             > /dev/null 2>&1; then
+        :
       else
         echo "$1" >&2
       fi
@@ -89,7 +95,34 @@ EOF
         exit 0
       fi
 
-      ID="$(echo         "$ENTRY" | jq -r .id)"
+      ID="$(echo  "$ENTRY" | jq -r .id)"
+      MUX="$(echo "$ENTRY" | jq -r '.mux // "tmux"')"
+
+      if [ "$MUX" = "herdr" ]; then
+        TID="$(echo "$ENTRY" | jq -r '.terminal_id // ""')"
+
+        # pane_id compacto gravado pode ter mudado — re-resolve por terminal_id
+        LIVE="$(herdr pane list 2>/dev/null \
+          | jq -c --arg t "$TID" \
+              '.result.panes[] | select(.terminal_id == $t)' \
+          | head -n1 || true)"
+
+        if [ -z "$TID" ] || [ -z "$LIVE" ]; then
+          mark_status "$ID" "dead"
+          notify "notify-jump: pane herdr morreu"
+          exit 0
+        fi
+
+        if ! herdr agent focus "$TID" > /dev/null 2>&1; then
+          WS="$(echo  "$LIVE" | jq -r '.workspace_id // ""')"
+          TAB="$(echo "$LIVE" | jq -r '.tab_id // ""')"
+          herdr workspace focus "$WS" > /dev/null 2>&1 || true
+          herdr tab focus "$TAB" > /dev/null 2>&1 || true
+        fi
+        mark_status "$ID" "read"
+        exit 0
+      fi
+
       SESSION="$(echo    "$ENTRY" | jq -r .session)"
       WINDOW_IDX="$(echo "$ENTRY" | jq -r .window_idx)"
       PANE="$(echo       "$ENTRY" | jq -r .pane)"

@@ -25,8 +25,9 @@ uso: notify-remove [flags]
 
 flags:
   --id ID    remove a entry com esse id
-  --group    (junto com --id) remove TODAS as entries do mesmo
-             (session, window_idx, pane, host) que essa entry
+  --group    (junto com --id) remove TODAS as entries do mesmo destino
+             que essa entry — tmux: (session, window_idx, pane, host);
+             herdr: (terminal_id, host)
   --all      limpa a fila inteira (truncate)
   -h, --help mostra esta ajuda
 EOF
@@ -69,7 +70,7 @@ EOF
       tmp="$(mktemp "$QUEUE_FILE.tmp.XXXXXX")"
 
       if $do_group; then
-        # Encontra a entry-alvo, extrai (session, window_idx, pane, host),
+        # Encontra a entry-alvo, extrai a chave do grupo (por mux),
         # filtra fora todas as entries com esses mesmos campos.
         ENTRY="$(jq -c -s --arg id "$target_id" \
           '[.[] | select(.id == $id)] | last // null' \
@@ -80,21 +81,37 @@ EOF
           exit 0
         fi
 
-        SESSION="$(echo "$ENTRY" | jq -r .session)"
-        WIN="$(echo    "$ENTRY" | jq -r .window_idx)"
-        PANE="$(echo   "$ENTRY" | jq -r .pane)"
-        HOST="$(echo   "$ENTRY" | jq -r .host)"
+        MUX="$(echo  "$ENTRY" | jq -r '.mux // "tmux"')"
+        HOST="$(echo "$ENTRY" | jq -r .host)"
 
-        jq -c \
-          --arg s "$SESSION" \
-          --argjson w "$WIN" \
-          --argjson p "$PANE" \
-          --arg h "$HOST" \
-          'select(
-             (.session != $s) or (.window_idx != $w)
-             or (.pane != $p) or (.host != $h)
-           )' \
-          "$QUEUE_FILE" > "$tmp"
+        if [ "$MUX" = "herdr" ]; then
+          TID="$(echo "$ENTRY" | jq -r '.terminal_id // ""')"
+
+          jq -c \
+            --arg t "$TID" \
+            --arg h "$HOST" \
+            'select(
+               ((.mux // "tmux") != "herdr")
+               or ((.terminal_id // "") != $t) or (.host != $h)
+             )' \
+            "$QUEUE_FILE" > "$tmp"
+        else
+          SESSION="$(echo "$ENTRY" | jq -r .session)"
+          WIN="$(echo    "$ENTRY" | jq -r .window_idx)"
+          PANE="$(echo   "$ENTRY" | jq -r .pane)"
+
+          jq -c \
+            --arg s "$SESSION" \
+            --argjson w "$WIN" \
+            --argjson p "$PANE" \
+            --arg h "$HOST" \
+            'select(
+               ((.mux // "tmux") != "tmux")
+               or (.session != $s) or (.window_idx != $w)
+               or (.pane != $p) or (.host != $h)
+             )' \
+            "$QUEUE_FILE" > "$tmp"
+        fi
       else
         jq -c --arg id "$target_id" \
           'select(.id != $id)' \

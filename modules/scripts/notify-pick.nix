@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs ? import <nixpkgs> {}, herdr ? null }:
 
 pkgs.writeShellApplication {
   name = "notify-pick";
@@ -9,7 +9,7 @@ pkgs.writeShellApplication {
     jq
     fzf
     tmux
-  ];
+  ] ++ pkgs.lib.optionals (herdr != null) [ herdr ];
 
   text = ''
     QUEUE_DIR="''${XDG_STATE_HOME:-$HOME/.local/state}/notify-beep"
@@ -23,14 +23,19 @@ pkgs.writeShellApplication {
     notify() {
       if [ -n "''${TMUX:-}" ]; then
         tmux display-message "$1"
+      elif command -v herdr > /dev/null 2>&1 \
+        && herdr notification show "notify-pick" --body "$1" --sound none \
+             > /dev/null 2>&1; then
+        :
       else
         echo "$1" >&2
       fi
     }
 
     # Gera o TSV: <id>\t<linha formatada>
-    # Agrupa entries por (session, window_idx, pane) e mostra a mais
-    # recente como representante; status do grupo é o "pior" (unread > read > dead).
+    # Agrupa entries por destino — tmux: (session, window_idx, pane);
+    # herdr: terminal_id — e mostra a mais recente como representante;
+    # status do grupo é o "pior" (unread > read > dead).
     gen_list() {
       if [ ! -s "$QUEUE_FILE" ]; then
         return 0
@@ -40,7 +45,12 @@ pkgs.writeShellApplication {
 
       jq -s -r --arg h "$host" '
         [.[] | select(.host == $h)]
-        | group_by([.session, .window_idx, .pane])
+        | group_by(
+            if (.mux // "tmux") == "herdr"
+            then ["h", .terminal_id]
+            else ["t", .session, .window_idx, .pane]
+            end
+          )
         | map(
             . as $group
             | (sort_by(.ts) | reverse | .[0]) as $latest
@@ -72,7 +82,17 @@ pkgs.writeShellApplication {
             end
           ) as $icon
         | (if ._count > 1 then "(\(._count)) " else "    " end) as $count_str
-        | "\(.id)\t\($icon) \($rel_pad)  \(.session):\(.window_idx).\(.pane)  \($count_str)\(.title) — \(.message)"
+        | (
+            if (.mux // "tmux") == "herdr"
+            then (
+              (if (.workspace_label // "") == "" then .workspace_id else .workspace_label end) as $ws
+              | (if (.tab_label // "") == "" then "?" else .tab_label end) as $tab
+              | "\($ws):\($tab)"
+            )
+            else "\(.session):\(.window_idx).\(.pane)"
+            end
+          ) as $loc
+        | "\(.id)\t\($icon) \($rel_pad)  \($loc)  \($count_str)\(.title) — \(.message)"
       ' "$QUEUE_FILE"
     }
 
