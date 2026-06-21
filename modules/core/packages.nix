@@ -1,6 +1,7 @@
 { pkgs, inputs, ... }:
 let
   herdrPkg = inputs.herdr.packages.x86_64-linux.default;
+  graphifyPkg = inputs.graphify.packages.x86_64-linux.default;
   notify-beep = import ../scripts/notify-beep.nix { inherit pkgs; herdr = herdrPkg; };
   notify-jump = import ../scripts/notify-jump.nix { inherit pkgs; herdr = herdrPkg; };
   notify-pick = import ../scripts/notify-pick.nix { inherit pkgs; herdr = herdrPkg; };
@@ -91,6 +92,7 @@ in {
     chromium
     inputs.zen-browser.packages.x86_64-linux.default
     herdrPkg
+    graphifyPkg
 
     linuxPackages.v4l2loopback
     usbutils

@@ -8,6 +8,8 @@
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     herdr.url = "github:ogulcancelik/herdr";
     herdr.inputs.nixpkgs.follows = "nixpkgs";
+    graphify.url = "github:guilhermegregio/nix-dev-envs?dir=graphify";
+    graphify.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
     fine-cmdline = {
       url = "github:VonHeikemen/fine-cmdline.nvim";
