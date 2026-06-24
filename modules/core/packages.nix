@@ -95,6 +95,7 @@ in {
     herdrPkg
     graphifyPkg
     kbPkg
+    obsidian
 
     linuxPackages.v4l2loopback
     usbutils

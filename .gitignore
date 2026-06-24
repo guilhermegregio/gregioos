@@ -1,0 +1,6 @@
+# nix
+result
+result-*
+
+# grafos do graphify (gerados pelo kb graph build / /graphify)
+graphify-out/
