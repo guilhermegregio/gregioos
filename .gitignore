@@ -2,5 +2,5 @@
 result
 result-*
 
-# grafos do graphify (gerados pelo kb graph build / /graphify)
-graphify-out/
+# grafo do graphify versionado via allowlist (graphify-out/.gitignore):
+# só graph.json+manifest.json; cache/html/relatórios ficam de fora (onda3 T06).

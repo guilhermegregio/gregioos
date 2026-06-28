@@ -1,0 +1,87 @@
+{
+  ".claude/settings.local.json": {
+    "mtime": 1773224043.32661,
+    "ast_hash": "6e2bea6aa69966bb5d0f7569a2014766",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/.neoconf.json": {
+    "mtime": 1778021247.355702,
+    "ast_hash": "8471bfc3f000e00f5f830159e3d9d37e",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/init.lua": {
+    "mtime": 1778024304.9768057,
+    "ast_hash": "d9646e1a180b5f6da5f8732fa974743d",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lazy-lock.json": {
+    "mtime": 1778024035.7033596,
+    "ast_hash": "401763616fc310edec2eb00776b6378c",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lazyvim.json": {
+    "mtime": 1778021247.355702,
+    "ast_hash": "364fa7da5b335584efd81f38f2453c73",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/config/autocmds.lua": {
+    "mtime": 1778021247.355996,
+    "ast_hash": "80122fa612cbaf9410e958255de5c1fe",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/config/keymaps.lua": {
+    "mtime": 1778021247.3561153,
+    "ast_hash": "82ea26bb8b1060e9651cfb166e96b140",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/config/lazy.lua": {
+    "mtime": 1778021247.3561153,
+    "ast_hash": "2f890e3989fbeab461cc81b6d323b675",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/config/options.lua": {
+    "mtime": 1778021247.3561153,
+    "ast_hash": "ad4990b9ed166b717f01bf47080a5969",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/plugins/conform.lua": {
+    "mtime": 1778021247.3561153,
+    "ast_hash": "ab682f6ba0920e81bda6c4fbe42e1cf0",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/plugins/example.lua": {
+    "mtime": 1778021247.3563752,
+    "ast_hash": "e6137b39f337472e5275190a7b9539cf",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/plugins/go.lua": {
+    "mtime": 1778021247.3563752,
+    "ast_hash": "a3761f2706ee0f364f16d9b807baf85b",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/plugins/opencode.lua": {
+    "mtime": 1778021247.3563752,
+    "ast_hash": "88b8da9f6f08324b5056961ccea7ba10",
+    "semantic_hash": ""
+  },
+  "modules/home/nvim/lua/plugins/surround.lua": {
+    "mtime": 1778021247.3563752,
+    "ast_hash": "a54ad3d1c20e08653907c5b5d3f65937",
+    "semantic_hash": ""
+  },
+  "modules/home/wezterm.lua": {
+    "mtime": 1740051787.3474011,
+    "ast_hash": "8dfe67cc423a79fdded646d201686215",
+    "semantic_hash": ""
+  },
+  "wallpapers/default.png": {
+    "mtime": 1739929136.54473,
+    "ast_hash": "4831a6b5e24ef80dfab5ba0efa6dce92",
+    "semantic_hash": ""
+  },
+  "wallpapers/nix01.png": {
+    "mtime": 1740322929.5522645,
+    "ast_hash": "cbeba2279201bd5a10e0f23323691bd6",
+    "semantic_hash": ""
+  }
+}

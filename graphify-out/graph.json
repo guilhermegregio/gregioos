@@ -1,0 +1,132 @@
+{
+  "directed": false,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "label": "init.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/init.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "nvim_init",
+      "community": 13,
+      "norm_label": "init.lua"
+    },
+    {
+      "label": "autocmds.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/config/autocmds.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "config_autocmds",
+      "community": 8,
+      "norm_label": "autocmds.lua"
+    },
+    {
+      "label": "keymaps.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/config/keymaps.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "config_keymaps",
+      "community": 9,
+      "norm_label": "keymaps.lua"
+    },
+    {
+      "label": "lazy.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/config/lazy.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "config_lazy",
+      "community": 10,
+      "norm_label": "lazy.lua"
+    },
+    {
+      "label": "options.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/config/options.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "config_options",
+      "community": 11,
+      "norm_label": "options.lua"
+    },
+    {
+      "label": "conform.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/plugins/conform.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "plugins_conform",
+      "community": 14,
+      "norm_label": "conform.lua"
+    },
+    {
+      "label": "example.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/plugins/example.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "plugins_example",
+      "community": 15,
+      "norm_label": "example.lua"
+    },
+    {
+      "label": "go.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/plugins/go.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "plugins_go",
+      "community": 16,
+      "norm_label": "go.lua"
+    },
+    {
+      "label": "opencode.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/plugins/opencode.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "plugins_opencode",
+      "community": 17,
+      "norm_label": "opencode.lua"
+    },
+    {
+      "label": "surround.lua",
+      "file_type": "code",
+      "source_file": "modules/home/nvim/lua/plugins/surround.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "plugins_surround",
+      "community": 18,
+      "norm_label": "surround.lua"
+    },
+    {
+      "label": "wezterm.lua",
+      "file_type": "code",
+      "source_file": "modules/home/wezterm.lua",
+      "source_location": "L1",
+      "_origin": "ast",
+      "id": "home_wezterm",
+      "community": 12,
+      "norm_label": "wezterm.lua"
+    }
+  ],
+  "links": [
+    {
+      "relation": "imports",
+      "context": "import",
+      "confidence": "EXTRACTED",
+      "confidence_score": 1.0,
+      "source_file": "modules/home/wezterm.lua",
+      "source_location": "1",
+      "weight": 1.0,
+      "source": "home_wezterm",
+      "target": "home_wezterm"
+    }
+  ],
+  "hyperedges": [],
+  "built_at_commit": "e3e8f61df93cf57be46e04f1364ec375db985ba0"
+}
