@@ -46,5 +46,46 @@ in {
   qt.platformTheme = "gnome";
 
   console.useXkbConfig = true;
+
+  # Permite rodar binários genéricos não-Nix (ex: Chromium baixado pelo
+  # Playwright para CLIs como notebooklm-py) resolvendo as libs dinâmicas
+  # via Nix em vez de depender de um /lib FHS que o NixOS não tem.
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      alsa-lib
+      at-spi2-atk
+      at-spi2-core
+      atk
+      cairo
+      cups
+      dbus
+      expat
+      fontconfig
+      freetype
+      gdk-pixbuf
+      glib
+      gtk3
+      libdrm
+      libxkbcommon
+      mesa
+      nspr
+      nss
+      pango
+      systemd
+      zlib
+      libx11
+      libxcb
+      libxcomposite
+      libxdamage
+      libxext
+      libxfixes
+      libxi
+      libxrandr
+      libxscrnsaver
+      libxtst
+    ];
+  };
+
   system.stateVersion = stateVersion;
 }
