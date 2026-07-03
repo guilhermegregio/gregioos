@@ -73,6 +73,8 @@ in {
 
     postgresql_15
 
+    uv
+
     nodejs_24
     pnpm
     biome
