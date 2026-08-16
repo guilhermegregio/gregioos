@@ -10,7 +10,7 @@
     herdr.inputs.nixpkgs.follows = "nixpkgs";
     graphify.url = "github:guilhermegregio/nix-dev-envs?dir=graphify";
     graphify.inputs.nixpkgs.follows = "nixpkgs";
-    kb.url = "git+file:///home/gregio/code/knowledge-gregio";
+    kb.url = "git+file:///home/gregio/code/gregio-marketplace";
     kb.inputs.nixpkgs.follows = "nixpkgs";
     stylix.url = "github:danth/stylix";
     fine-cmdline = {
