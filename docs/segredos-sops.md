@@ -1,310 +1,127 @@
-# Ativar o sops-nix no Mac de trabalho
+# Segredos
 
-Tira `MOBILE_PLATFORM_GITHUB_TOKEN` e companhia do `environment.variables` —
-que hoje geram `/etc/zshenv`, legível por qualquer processo — e passa a
-versioná-los cifrados no repo, decriptados na ativação para `/run/secrets`
-com permissão `0400`.
+Os tokens ficam **cifrados no repo** (`secrets/tokens.yaml`) e são decriptados
+na ativação do sistema para `/run/secrets`, com permissão `0400`, fora do nix
+store. O valor nunca passa pela avaliação do Nix.
 
-> ⚠️ **A branch `sops` não avalia até o passo 3.** O código do wire já está
-> commitado, mas ele aponta para `secrets/tokens.yaml`, que só existe depois
-> que você o criar — e o flake só enxerga arquivos trackeados pelo git. Rode os
-> passos em ordem; não tente `fr` antes do passo 4.
+Motivo: `environment.variables` gera `/etc/zshenv`, que é um symlink para o
+store — **legível por qualquer processo da máquina** e impossível de apagar de
+verdade.
 
-Tudo aqui roda **no Mac de trabalho** (`CV9NF4V0H6`), onde está a sua chave.
+Ferramenta: [sops-nix](https://github.com/Mic92/sops-nix), com chaves age
+derivadas das chaves SSH de cada máquina.
 
-> **Sobre o `nix shell` nos comandos abaixo:** o `sops` e o `ssh-to-age` estão
-> declarados no config (`modules/home/darwin/packages.nix` e, no NixOS,
-> `modules/core/packages.nix`), mas só entram no PATH **depois** do primeiro
-> `fr` — e o `fr` depende de o `secrets/tokens.yaml` existir. Por isso o
-> bootstrap usa `nix shell`. Da segunda edição em diante é só `sops`.
+## Quem pode decriptar
 
----
+`.sops.yaml` lista uma chave por máquina. Cada uma decripta de forma
+independente — não é esquema de "n de m".
 
-## Passo 1 — a chave age
+| âncora | máquina |
+| --- | --- |
+| `stone` | MacBook de trabalho |
+| `tuf` | NixOS |
+| `nxt` | MacBook pessoal |
 
-O sops usa chaves age. Dá para derivar uma da sua chave SSH, evitando
-gerenciar mais um par:
+## Editar ou rotacionar
+
+De qualquer máquina listada acima:
 
 ```bash
-cd ~/gregioos
-git fetch origin && git checkout sops
+sops secrets/tokens.yaml
+git commit -am "chore(sops): rotaciona token"
+fr                            # só quem consome precisa
+```
 
-# a pública — vai para o .sops.yaml, é pública mesmo
-nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub
+O `SOPS_AGE_KEY_FILE` já vem do config (`modules/home/common/sops.nix`). O que
+não é declarativo é a identidade em si — em uma máquina nova, gere-a uma vez:
 
-# a identidade age que o CLI usa para editar. NUNCA vai para o repo.
+```bash
 mkdir -p ~/.config/sops/age
-nix shell "nixpkgs#ssh-to-age" -c \
-  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
 chmod 600 ~/.config/sops/age/keys.txt
-head -c 20 ~/.config/sops/age/keys.txt   # tem que começar com AGE-SECRET-KEY-
 ```
 
-> **Por que não basta apontar para a chave SSH.** Parece que `ssh-to-age` só
-> traduz um formato, mas há **dois esquemas diferentes** em jogo:
->
-> | esquema | recipient | identidade |
-> |---|---|---|
-> | X25519 derivado (`ssh-to-age`) | `age1…` | `AGE-SECRET-KEY-1…` |
-> | SSH nativo do age (`agessh`) | `ssh-ed25519 AAAA…` | a própria chave SSH |
->
-> O `.sops.yaml` usa `age1…`, o primeiro esquema. Mas quando o sops lê uma
-> chave SSH (via `SOPS_AGE_SSH_PRIVATE_KEY_FILE` ou de `~/.ssh/id_ed25519`),
-> ele a interpreta com `agessh` — o segundo. A identidade resultante é de outro
-> tipo e **não decripta** um arquivo cifrado para `age1…`, resultando em
-> `no identity matched any of the recipients` mesmo com a chave certa em mãos.
->
-> Daí o `keys.txt`: ele guarda a identidade X25519, que é a que casa.
->
-> A variável é declarada no config (`SOPS_AGE_KEY_FILE`) porque o default do
-> sops é `<os.UserConfigDir()>/sops/age/keys.txt` — e no macOS isso é
-> `~/Library/Application Support`, não `~/.config`.
->
-> **A ativação do sistema não depende disto.** Lá quem decripta é o módulo, com
-> `sops.age.sshKeyPaths`, que faz a conversão internamente — por isso o `fr`
-> funciona mesmo quando o `sops` da linha de comando não abre.
->
-> ⚠️ **Chave com passphrase não funciona:** o sops não suporta chave SSH
-> protegida por senha. Teste com `ssh-keygen -y -P "" -f ~/.ssh/id_ed25519`.
+> ⚠️ **Tem de ser a identidade age** (`AGE-SECRET-KEY-1…`) derivada da chave
+> SSH, **não a chave SSH**. Explicação abaixo, em *Dois esquemas*.
 
-> Se você não tem `~/.ssh/id_ed25519`, gere com
-> `ssh-keygen -t ed25519 -C "guilherme.gregio@stone"` antes.
+## Autorizar uma máquina nova
 
-## Passo 2 — o `.sops.yaml`
-
-Declara **quem pode decriptar**. É público e vai para o repo.
-
-Inclua desde já a chave do NixOS, não só a do Mac: sem ela você só consegue
-editar os segredos estando no Mac de trabalho. A chave age do
-`gregio-asus-tuf-f15` já está derivada abaixo (é pública — vem da
-`id_ed25519.pub` daquela máquina):
-
-As âncoras levam o nome da máquina, não do papel — `stone` e `tuf` dizem de
-quem é a chave; `work` e `nixos` não sobrevivem à terceira máquina.
+Na máquina nova:
 
 ```bash
-cd ~/gregioos
-STONE=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
-TUF=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
-
-cat > .sops.yaml <<EOF
-# Quem pode decriptar. Público — a chave age deriva da .pub de cada máquina.
-keys:
-  - &stone $STONE   # CV9NF4V0H6 — MacBook de trabalho
-  - &tuf   $TUF   # gregio-asus-tuf-f15 — NixOS
-  # - &nxt   age1...   # nxt-os-01 — preencher no bootstrap (fase 6)
-
-creation_rules:
-  - path_regex: secrets/.*\.yaml\$
-    key_groups:
-      - age:
-          - *stone
-          - *tuf
-          # - *nxt
-EOF
-cat .sops.yaml
+ssh-to-age < ~/.ssh/id_ed25519.pub     # a chave age pública dela
 ```
 
-Cada chave listada consegue decriptar de forma independente — não é um esquema
-de "n de m".
+Acrescente ao `.sops.yaml` em **dois lugares** — em `keys` e em `key_groups`.
+Só o primeiro deixa a chave declarada e ignorada, e o switch da máquina falha na
+ativação sem explicação óbvia.
 
-### Quando o `nxt-os-01` chegar
-
-O slot já está no arquivo, comentado. No bootstrap (fase 6), na máquina nova:
-
-```bash
-nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub
-```
-
-Cole o valor no lugar do `age1...`, descomente as **duas** linhas — a de `keys`
-e a de `key_groups`, esquecer a segunda é o erro fácil — e recifre a partir de
-uma máquina que já decripta:
+Depois, **de uma máquina que já decripta**:
 
 ```bash
 sops updatekeys secrets/tokens.yaml
+git commit -am "chore(sops): autoriza <host>"
 ```
 
-Aqui o `updatekeys` funciona, porque a máquina que roda ainda tem a sua chave
-válida no arquivo.
+O `updatekeys` decripta e recifra para a nova lista — por isso precisa rodar de
+onde já se tem acesso.
 
-**Só é obrigatório para máquinas que vão consumir segredos:** uma que apenas
-edita precisa estar na lista; uma que decripta na ativação e não está **falha o
-switch**.
+## Adicionar um segredo
 
-### Editar os segredos a partir do NixOS
+1. `sops secrets/tokens.yaml` e acrescente a chave em snake_case
+2. Declare em `hosts/<host>/default.nix`, dentro de `sops.secrets`
+3. Se for virar variável de ambiente, acrescente ao template `dev-env` com
+   `config.sops.placeholder.<nome>`
 
-Uma vez que a chave acima esteja no `.sops.yaml`, no NixOS basta ter a
-privada onde o CLI procura:
+O `placeholder` é o que mantém o valor fora do store: ele é substituído na
+ativação, não na avaliação. Ler o segredo com `builtins.readFile` seria
+exatamente o erro que este desenho evita.
 
-```bash
-mkdir -p ~/.config/sops/age
-nix shell "nixpkgs#ssh-to-age" -c \
-  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
-
-sops secrets/tokens.yaml    # edita de qualquer uma das máquinas
-```
-
-Isso é só para **editar**. Para o NixOS *consumir* segredos na ativação seria
-preciso `inputs.sops-nix.nixosModules.sops` no `mkNixos` e declarar
-`sops.secrets` — hoje não há segredo nenhum do lado Linux, então não está
-feito.
-
-## Passo 3 — os segredos
-
-Abre o `$EDITOR`. Escreva YAML puro, com **estes três nomes** (o config os
-referencia):
-
-```bash
-mkdir -p secrets
-nix shell "nixpkgs#sops" -c sops secrets/tokens.yaml
-```
-
-```yaml
-mobile_platform_github_token: ghp_o-valor-real
-custom_github_pat_package: ghp_o-outro-valor
-temp_tap_sdk_ios_token: o-terceiro-valor
-```
-
-Ao salvar, o sops reescreve o arquivo com os **valores** cifrados e as
-**chaves** em claro — por isso o diff no git continua legível.
-
-```bash
-head -4 secrets/tokens.yaml   # deve mostrar ENC[AES256_GCM,...]
-git add -A                    # obrigatório: o flake não vê arquivo untracked
-```
-
-## Passo 4 — aplicar
-
-```bash
-fr
-```
-
-## Passo 5 — verificar
-
-Em um **terminal novo**:
-
-```bash
-ls -l /run/secrets/                    # os 3 segredos, 0400, dono você
-ls -l /run/secrets/rendered/dev-env    # o arquivo que o zsh dá source
-echo $MOBILE_PLATFORM_GITHUB_TOKEN     # o valor real
-
-# o teste que importa: o valor NÃO pode estar no store
-rg -l "$MOBILE_PLATFORM_GITHUB_TOKEN" /nix/store 2>/dev/null || echo "ok: fora do store"
-```
-
-O último comando é o ponto do exercício. Se ele achar algo, o valor vazou para
-o store em tempo de avaliação — o que o `sops.placeholder` existe para evitar.
-
-## Passo 6 — commitar e mesclar
-
-```bash
-git commit -am "feat(darwin): tokens da Stone via sops-nix"
-git push -u origin sops
-```
-
-O merge para a `main` pode ser feito daqui ou pelo NixOS.
-
----
-
-## Trocar as chaves depois (ou: "cifrei com a chave errada")
-
-`sops updatekeys` **só funciona se você conseguir decriptar o arquivo** — ele
-decripta e recifra para os novos recipients. Se a chave que cifrou não está
-mais à mão, ele falha com:
-
-```
-Failed to get the data key required to decrypt the SOPS file.
-  ageXXXX: FAILED
-    - identity did not match any of the recipients
-```
-
-### Caso A — você ainda tem a chave que cifrou
-
-```bash
-# corrija o .sops.yaml primeiro, depois:
-sops updatekeys secrets/tokens.yaml
-```
-
-### Caso B — não tem (ou os valores eram de teste): recrie
-
-Cifrar não exige a privada, só as públicas do `.sops.yaml`. Então apagar e
-refazer é seguro e mais rápido:
-
-```bash
-cd ~/gregioos
-
-# 1. as duas chaves reais no .sops.yaml
-STONE=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
-TUF=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
-echo "stone=$STONE"
-
-cat > .sops.yaml <<EOF
-# Quem pode decriptar. Público — a chave age deriva da .pub de cada máquina.
-keys:
-  - &stone $STONE   # CV9NF4V0H6 — MacBook de trabalho
-  - &tuf   $TUF   # gregio-asus-tuf-f15 — NixOS
-  # - &nxt   age1...   # nxt-os-01 — preencher no bootstrap (fase 6)
-
-creation_rules:
-  - path_regex: secrets/.*\.yaml\$
-    key_groups:
-      - age:
-          - *stone
-          - *tuf
-          # - *nxt
-EOF
-
-# 2. a identidade age que o CLI vai usar (o config declara o caminho;
-#    aqui é para a sessão atual, antes do primeiro switch)
-mkdir -p ~/.config/sops/age
-nix shell "nixpkgs#ssh-to-age" -c \
-  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
-export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt
-
-# 3. joga fora o antigo e cria de novo
-rm -f secrets/tokens.yaml
-nix shell "nixpkgs#sops" -c sops secrets/tokens.yaml
-
-# 4. confirme que ficou cifrado para as DUAS chaves
-rg -o "age1[a-z0-9]{20,}" secrets/tokens.yaml | sort -u   # tem que listar 2
-
-git add -A
-```
-
-> **Confira sempre o par.** O `.sops.yaml` diz para quem *novos* arquivos serão
-> cifrados; os recipients de um arquivo **já existente** ficam dentro dele. Os
-> dois divergem em silêncio — o comando do passo 4 é o que revela isso.
-
----
-
-## Se algo der errado
-
-Antes de investigar na mão, rode o diagnóstico — ele compara a sua chave com
-os destinatários reais do arquivo e diz onde está o descompasso:
+## Diagnóstico
 
 ```bash
 ./dev/sops-doctor.sh
 ```
 
-| sintoma | causa provável |
-|---|---|
-| `file not found` no eval | o `secrets/tokens.yaml` não foi `git add`-ado |
-| ativação falha ao decriptar | a chave em `age.sshKeyPaths` não é a que cifrou; confira `~/.ssh/id_ed25519` |
-| `/run` não existe | o nix-darwin cria via `/etc/synthetic.conf`; reinicie e rode o switch de novo |
-| variável vazia no shell | o `initContent` só entra em sessão nova; abra outro terminal |
-| `identity did not match any of the recipients` | o arquivo foi cifrado para outra chave — ver "Trocar as chaves depois" |
-| sops lista `~/.ssh/id_rsa` entre os lugares que tentou | é só ruído: ele testa `id_ed25519` **e** `id_rsa`, e lista os que não existem. O erro real é o `identity did not match` acima |
-| `~/.config/sops/age/keys.txt` ignorado no Mac | no macOS o sops procura em `~/Library/Application Support/sops/age/keys.txt`. Use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` |
-| chave SSH com passphrase | não suportado pelo sops; gere uma sem senha e some a age pública dela ao `.sops.yaml` |
-| `unknown identity type` em `SOPS_AGE_KEY`/`SOPS_AGE_KEY_FILE` | essas querem identidade **age** (`AGE-SECRET-KEY-1…`). Apontá-las para uma chave SSH quebra o parse |
-| `no identity matched any of the recipients`, com o doctor dizendo que a chave confere | esquema errado: o `.sops.yaml` usa `age1…` (X25519) e a chave SSH é lida como `agessh`. Gere o `keys.txt` com `ssh-to-age -private-key` (passo 1) |
+Compara a sua chave com os destinatários reais do arquivo, checa passphrase,
+variáveis conflitantes e a identidade que o CLI vai usar.
 
-**Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
-O `sops` já está no PATH das três máquinas.
-Nenhum passo manual na máquina.
+---
 
-**Backup da chave privada:** ela não está no repo, de propósito. Se você perder
-a `~/.ssh/id_ed25519` sem outra chave autorizada no `.sops.yaml`, os valores
-cifrados viram lixo e terão de ser recriados.
+## Dois esquemas — a armadilha que custa horas
+
+`ssh-to-age` parece só traduzir um formato. Não é: há **dois esquemas
+incompatíveis** de usar chave SSH com age.
+
+| esquema | recipient no `.sops.yaml` | identidade que decripta |
+| --- | --- | --- |
+| X25519 derivado (`ssh-to-age`) | `age1…` | `AGE-SECRET-KEY-1…` (o `keys.txt`) |
+| SSH nativo do age (`agessh`) | `ssh-ed25519 AAAA…` | a própria chave SSH |
+
+Este repo usa o primeiro. Quando se aponta o sops para a chave SSH — via
+`SOPS_AGE_SSH_PRIVATE_KEY_FILE` ou pelo default `~/.ssh/id_ed25519` — ele a lê
+com `agessh` e produz identidade de **outro tipo**, que não abre esses
+recipients. O sintoma é `no identity matched any of the recipients` mesmo com a
+chave certa em mãos e as públicas conferindo.
+
+**A ativação do sistema não passa por isso**: lá quem decripta é o módulo, via
+`sops.age.sshKeyPaths`, que converte internamente. Daí o sintoma que mais
+confunde — **o `fr` funciona e o `sops` da linha de comando não abre**.
+
+## Outros erros
+
+| erro | causa |
+| --- | --- |
+| `no identity matched`, com o doctor dizendo que a chave confere | falta o `keys.txt`; ver *Dois esquemas* |
+| `unknown identity type` | `SOPS_AGE_KEY`/`SOPS_AGE_KEY_FILE` apontando para chave SSH. `unset` e use o `keys.txt` |
+| `~/.ssh/id_rsa` aparece na mensagem | ruído: o sops lista os caminhos onde não achou arquivo. O erro real é a linha do `identity` |
+| chave SSH com passphrase | não suportado. Gere uma sem senha e some a age pública dela ao `.sops.yaml` |
+| `keys.txt` ignorado no macOS | o default do sops é `<os.UserConfigDir()>/sops/age/keys.txt` — no macOS, `~/Library/Application Support`. O config declara `SOPS_AGE_KEY_FILE` justamente para não depender disso |
+| `file not found` no eval | `secrets/tokens.yaml` não foi `git add`-ado. Flake não enxerga arquivo untracked |
+
+> O `.sops.yaml` diz para quem arquivos **novos** serão cifrados; os
+> destinatários de um arquivo existente ficam gravados **dentro dele**. Os dois
+> divergem em silêncio — o doctor compara os dois.
+
+**Backup da chave privada:** ela não está no repo, de propósito. Perder a
+`~/.ssh/id_ed25519` sem outra máquina autorizada torna os valores irrecuperáveis.

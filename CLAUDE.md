@@ -32,7 +32,7 @@ modules/
   scripts/                   # derivations de scripts (wtree, notify-*, ...)
 profiles/nvidia-laptop/      # importa hardware + drivers + core (NixOS)
 dev/hm-snapshot.sh           # compara o perfil home-manager entre dois estados
-docs/                        # roteiros de operação deste repo
+docs/                        # guias: nova máquina (macOS/NixOS), segredos
 ```
 
 ## Comandos essenciais

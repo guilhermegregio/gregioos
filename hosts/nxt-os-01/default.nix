@@ -2,7 +2,7 @@
 # Stone ou toolchain mobile. Se algo daqui virar necessidade das duas máquinas,
 # o lugar é modules/darwin, não uma cópia.
 { pkgs, ... }: {
-  # Confirmar na máquina antes do primeiro switch (docs/bootstrap-nxt-os-01.md):
+  # Confirmar na máquina antes do primeiro switch (docs/nova-maquina-macos.md):
   #   dscl . -read /Groups/nixbld PrimaryGroupID
   # Instalações antigas de Nix usavam 30000.
   ids.gids.nixbld = 350;
