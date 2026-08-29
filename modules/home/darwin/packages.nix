@@ -28,6 +28,7 @@ let
   notify-remove = import ../../scripts/notify-remove.nix { inherit pkgs; };
   claude-notify = import ../../scripts/claude-notify.nix { inherit pkgs; };
   wtree = import ../../scripts/wtree.nix { inherit pkgs; };
+  cc-review = import ../../scripts/cc-review.nix { inherit pkgs; };
 in {
   home.packages = with pkgs; [
     herdrPkg
@@ -37,6 +38,7 @@ in {
     notify-remove
     claude-notify
     wtree
+    cc-review
 
     # usados pelos aliases de ../common/zsh.nix
     eza
@@ -59,6 +61,11 @@ in {
     yazi
     cookiecutter
     httpie
+
+    # containers. O `docker` vinha carona na dependência do colima e sumiria
+    # com o downgrade dele — declarado aqui para não depender disso de novo.
     colima
+    docker
+    docker-compose
   ];
 }
