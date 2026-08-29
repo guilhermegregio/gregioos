@@ -65,6 +65,7 @@ in {
 
     # utilitários
     bat
+    television
     yazi
     cookiecutter
     httpie
