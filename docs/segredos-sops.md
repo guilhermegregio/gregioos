@@ -38,28 +38,59 @@ chmod 600 ~/.config/sops/age/keys.txt
 
 ## Passo 2 — o `.sops.yaml`
 
-Declara quem pode decriptar. É público e vai para o repo. O comando abaixo
-monta o arquivo já com a sua chave:
+Declara **quem pode decriptar**. É público e vai para o repo.
+
+Inclua desde já a chave do NixOS, não só a do Mac: sem ela você só consegue
+editar os segredos estando no Mac de trabalho. A chave age do
+`gregio-asus-tuf-f15` já está derivada abaixo (é pública — vem da
+`id_ed25519.pub` daquela máquina):
 
 ```bash
 cd ~/gregioos
-PUB=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
+WORK=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
+NIXOS=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+
 cat > .sops.yaml <<EOF
 keys:
-  - &work $PUB
+  - &work  $WORK
+  - &nixos $NIXOS
 
 creation_rules:
   - path_regex: secrets/.*\.yaml\$
     key_groups:
       - age:
           - *work
+          - *nixos
 EOF
 cat .sops.yaml
 ```
 
-Quando o `nxt-os-01` existir, a chave dele entra nessa lista e você roda
-`sops updatekeys secrets/tokens.yaml` — sem isso, a máquina nova não decripta
-e o switch falha na ativação.
+Cada chave listada consegue decriptar de forma independente — não é um esquema
+de "n de m".
+
+Quando o `nxt-os-01` existir, a chave dele entra na lista e você roda
+`sops updatekeys secrets/tokens.yaml`. **Só é obrigatório para máquinas que vão
+consumir segredos**: uma máquina que só edita precisa estar na lista; uma que
+decripta na ativação, se não estiver, falha o switch.
+
+### Editar os segredos a partir do NixOS
+
+Uma vez que a chave acima esteja no `.sops.yaml`, no NixOS basta ter a
+privada onde o CLI procura:
+
+```bash
+mkdir -p ~/.config/sops/age
+nix shell "nixpkgs#ssh-to-age" -c \
+  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+chmod 600 ~/.config/sops/age/keys.txt
+
+sops secrets/tokens.yaml    # edita de qualquer uma das máquinas
+```
+
+Isso é só para **editar**. Para o NixOS *consumir* segredos na ativação seria
+preciso `inputs.sops-nix.nixosModules.sops` no `mkNixos` e declarar
+`sops.secrets` — hoje não há segredo nenhum do lado Linux, então não está
+feito.
 
 ## Passo 3 — os segredos
 
