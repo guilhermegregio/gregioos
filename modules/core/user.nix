@@ -6,7 +6,7 @@
   profile,
   ...
 }: let
-  inherit (import ../../hosts/${host}/variables.nix) gitUsername stateVersion;
+  inherit (import ../../hosts/${host}/variables.nix) gitUsername homeStateVersion;
 in {
   imports = [inputs.home-manager.nixosModules.home-manager];
   home-manager = {
@@ -19,7 +19,7 @@ in {
       home = {
         username = "${username}";
         homeDirectory = "/home/${username}";
-        stateVersion = stateVersion;
+        stateVersion = homeStateVersion;
       };
       programs.home-manager.enable = true;
     };

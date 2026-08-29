@@ -16,5 +16,7 @@
   keyboardLayout = "us";
   consoleKeyMap = "us";
 
-  stateVersion = "24.11";
+  # Ver a explicação em hosts/gregio-asus-tuf-f15/variables.nix.
+  systemStateVersion = "24.11";
+  homeStateVersion = "26.05";
 }

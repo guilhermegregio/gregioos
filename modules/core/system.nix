@@ -1,5 +1,5 @@
 { pkgs, host, ... }:
-let inherit (import ../../hosts/${host}/variables.nix) stateVersion;
+let inherit (import ../../hosts/${host}/variables.nix) systemStateVersion;
 in {
   nix = {
     settings = {
@@ -87,5 +87,5 @@ in {
     ];
   };
 
-  system.stateVersion = stateVersion;
+  system.stateVersion = systemStateVersion;
 }

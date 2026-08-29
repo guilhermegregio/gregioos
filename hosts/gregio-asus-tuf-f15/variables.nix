@@ -16,5 +16,13 @@
   keyboardLayout = "us";
   consoleKeyMap = "us";
 
-  stateVersion = "24.11";
+  # Versão do NixOS em que a máquina foi instalada. NÃO atualizar: não traz
+  # pacote novo nenhum, só troca defaults de dados stateful (o mecanismo existe
+  # justamente para não quebrá-los). Ver a descrição de `system.stateVersion`.
+  systemStateVersion = "24.11";
+
+  # Contrato do home-manager, independente do de cima. Em 26.05 os defaults
+  # novos valem — entre eles `gtk.gtk4.theme = null` no lugar do legado
+  # `config.gtk.theme`.
+  homeStateVersion = "26.05";
 }
