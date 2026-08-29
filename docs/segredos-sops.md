@@ -26,12 +26,29 @@ git fetch origin && git checkout sops
 # a pública — vai para o .sops.yaml, é pública mesmo
 nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub
 
-# a privada, que o CLI do sops usa para editar. NUNCA vai para o repo.
-mkdir -p ~/.config/sops/age
-nix shell "nixpkgs#ssh-to-age" -c \
-  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
 ```
+
+> **Não é preciso gerar um `keys.txt`.** O sops lê a chave SSH diretamente, e o
+> config declara `SOPS_AGE_SSH_PRIVATE_KEY_FILE` apontando para
+> `~/.ssh/id_ed25519` — o primeiro lugar da ordem de busca dele. Basta abrir um
+> terminal novo depois do `fr`.
+>
+> Se precisar antes do primeiro switch, exporte na mão:
+>
+> ```bash
+> export SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519
+> ```
+>
+> **Por que não `~/.config/sops/age/keys.txt`:** o sops procura em
+> `<userConfigDir>/sops/age/keys.txt`, e no macOS isso é
+> `~/Library/Application Support/sops/age/keys.txt` — `os.UserConfigDir()` só
+> respeita `XDG_CONFIG_HOME` se ela estiver definida. O caminho `~/.config` vale
+> no Linux, não no Mac.
+>
+> ⚠️ **Chave com passphrase não funciona:** o sops não suporta chave SSH
+> protegida por senha. Teste com `ssh-keygen -y -P "" -f ~/.ssh/id_ed25519`;
+> se pedir senha, gere uma chave sem passphrase só para o sops e adicione a age
+> pública dela ao `.sops.yaml`.
 
 > Se você não tem `~/.ssh/id_ed25519`, gere com
 > `ssh-keygen -t ed25519 -C "guilherme.gregio@stone"` antes.
@@ -221,11 +238,8 @@ creation_rules:
           # - *nxt
 EOF
 
-# 2. a privada onde o CLI a encontra — sem isto você cifra mas não reabre
-mkdir -p ~/.config/sops/age
-nix shell "nixpkgs#ssh-to-age" -c \
-  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
-chmod 600 ~/.config/sops/age/keys.txt
+# 2. a chave que o CLI vai usar (o config declara isto; aqui é para a sessão atual)
+export SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519
 
 # 3. joga fora o antigo e cria de novo
 rm -f secrets/tokens.yaml
@@ -252,7 +266,9 @@ git add -A
 | `/run` não existe | o nix-darwin cria via `/etc/synthetic.conf`; reinicie e rode o switch de novo |
 | variável vazia no shell | o `initContent` só entra em sessão nova; abra outro terminal |
 | `identity did not match any of the recipients` | o arquivo foi cifrado para outra chave — ver "Trocar as chaves depois" |
-| sops procura em `~/.ssh/id_rsa` e não acha | falta o `~/.config/sops/age/keys.txt`; passo 1 |
+| sops lista `~/.ssh/id_rsa` entre os lugares que tentou | é só ruído: ele testa `id_ed25519` **e** `id_rsa`, e lista os que não existem. O erro real é o `identity did not match` acima |
+| `~/.config/sops/age/keys.txt` ignorado no Mac | no macOS o sops procura em `~/Library/Application Support/sops/age/keys.txt`. Use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` |
+| chave SSH com passphrase | não suportado pelo sops; gere uma sem senha e some a age pública dela ao `.sops.yaml` |
 
 **Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
 Nenhum passo manual na máquina.
