@@ -1,4 +1,11 @@
-{ config, lib, pkgs, ... }: {
+# O editor: pacote, toolchain de build dos plugins e as variáveis. A config
+# vem do dotfiles (`nvim/.config/nvim/`, via stow).
+#
+# Antes daqui havia um `home.activation` que linkava ~/.config/nvim para o
+# working tree do gregioos — a mesma ideia do stow, feita à mão para escapar do
+# store read-only. Agora o stow faz isso, e o lazy-lock.json fica versionado
+# junto de quem o escreve.
+{ pkgs, ... }: {
   home.packages = with pkgs; [
     neovim
     gcc
@@ -18,14 +25,4 @@
     vi = "nvim";
     vim = "nvim";
   };
-
-  home.activation.linkNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    NVIM_SRC="${config.home.homeDirectory}/gregioos/modules/home/common/nvim"
-    NVIM_DST="${config.xdg.configHome}/nvim"
-    run mkdir -p "${config.xdg.configHome}"
-    if [ -e "$NVIM_DST" ] && [ ! -L "$NVIM_DST" ]; then
-      run rm -rf "$NVIM_DST"
-    fi
-    run ln -snf "$NVIM_SRC" "$NVIM_DST"
-  '';
 }

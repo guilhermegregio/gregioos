@@ -10,12 +10,6 @@ let
 in {
   imports = [ ./nh.nix ./packages.nix ];
 
-  home.file = {
-    # aerospace substituiu o yabai/skhd; os dois saíram do config.
-    ".aerospace.toml".source = ./aerospace.toml;
-    ".config/herdr/config.toml".source = ./herdr-config.toml;
-  };
-
   # `-r` em vez de `-f`: se a decriptação não rodou, o shell não fica barulhento.
   programs.zsh.initContent = lib.optionalString (devEnv != null) ''
     [ -r ${devEnv} ] && source ${devEnv}
