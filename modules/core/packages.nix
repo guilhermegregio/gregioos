@@ -65,6 +65,9 @@ in {
     # segredos — editar secrets/*.yaml deste repo sem `nix shell`
     sops
     ssh-to-age
+
+    # dotfiles — o install.sh do repo ~/code/dotfiles depende dele
+    stow
     television
     notify-beep
     notify-jump

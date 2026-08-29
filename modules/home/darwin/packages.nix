@@ -55,6 +55,9 @@ in {
     sops
     ssh-to-age
 
+    # dotfiles — o install.sh do repo ~/code/dotfiles depende dele
+    stow
+
     # git e github
     gh-dash
     tig
