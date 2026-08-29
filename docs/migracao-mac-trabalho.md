@@ -120,13 +120,29 @@ tinha.
 ## Passo 5 — o switch
 
 O `darwin-rebuild` já existe nesta máquina, então não precisa do
-`./result/sw/bin/`. O `-E` preserva a variável da CA para o sudo; sem ele o
-switch pode falhar no meio, quando o daemon for buscar algo.
+`./result/sw/bin/`.
 
 ```bash
 cd ~/gregioos
-sudo -E darwin-rebuild switch --flake ".#CV9NF4V0H6"
+sudo env PATH=$PATH darwin-rebuild switch --flake ".#CV9NF4V0H6"
 ```
+
+> **Use `env PATH=$PATH`, não `sudo -E`** (verificado na máquina em 29/08). O
+> sudoers do macOS traz `Defaults env_reset`, e o `-E` só vale se o usuário
+> tiver a permissão `SETENV` — sem ela o sudo descarta o ambiente do mesmo
+> jeito, e o `darwin-rebuild` nem é encontrado no PATH do root. Passar o PATH
+> explicitamente contorna isso.
+
+O `--flake .` sozinho também resolve, sem o `#CV9NF4V0H6`: o attr do flake é o
+hostname real da máquina, então o nix-darwin acha o host pelo `scutil`.
+
+### Se abortar em `would be clobbered`
+
+Resolvido no config desde 29/08 (`backupFileExtension`), mas fica o registro: o
+home-manager não sobrescreve arquivo que ele não criou, e `gh` e `btop` escrevem
+os seus no primeiro uso. Com a opção declarada, ele renomeia para `.backup` e
+segue — os originais ficam em `~/.config/gh/config.yml.backup` e
+`~/.config/btop/btop.conf.backup`.
 
 ### Se reclamar de arquivos em `/etc`
 
