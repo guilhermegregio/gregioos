@@ -15,7 +15,6 @@
     # shells
     ./bash.nix
     ./zsh.nix
-    ./nushell.nix
     # editors
     ./nvim.nix
   ];
