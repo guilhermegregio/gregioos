@@ -265,6 +265,13 @@ git add -A
 
 ## Se algo der errado
 
+Antes de investigar na mão, rode o diagnóstico — ele compara a sua chave com
+os destinatários reais do arquivo e diz onde está o descompasso:
+
+```bash
+./dev/sops-doctor.sh
+```
+
 | sintoma | causa provável |
 |---|---|
 | `file not found` no eval | o `secrets/tokens.yaml` não foi `git add`-ado |
