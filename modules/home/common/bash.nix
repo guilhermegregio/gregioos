@@ -1,5 +1,5 @@
 { pkgs, lib, host, ... }:
-let nh = if pkgs.stdenv.isDarwin then "nh darwin" else "nh os";
+let nh = if pkgs.stdenv.hostPlatform.isDarwin then "nh darwin" else "nh os";
 in {
   programs.bash = {
     enable = true;
@@ -28,7 +28,7 @@ in {
       la = "eza -lah --icons --grid --group-directories-first";
       ".." = "cd ..";
       ls-env = "fd -H -I -t f -E node_modules -E .git -E .next -E .direnv -E .nx -E .turbo -E .cache -E dist -E build '^\\.env'";
-    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+    } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       # switch-to-configuration é do NixOS.
       ncg = "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
     };

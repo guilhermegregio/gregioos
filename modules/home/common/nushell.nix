@@ -1,5 +1,5 @@
 { pkgs, lib, host, ... }:
-let nh = if pkgs.stdenv.isDarwin then "nh darwin" else "nh os";
+let nh = if pkgs.stdenv.hostPlatform.isDarwin then "nh darwin" else "nh os";
 in {
   programs = {
     nushell = {
@@ -10,7 +10,7 @@ in {
         $env.config = {
           show_banner: false
         }
-      '' + lib.optionalString pkgs.stdenv.isLinux ''
+      '' + lib.optionalString pkgs.stdenv.hostPlatform.isLinux ''
 
         def ncg [] {
             nix-collect-garbage --delete-old

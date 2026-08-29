@@ -1,13 +1,13 @@
 { pkgs ? import <nixpkgs> {}, herdr ? null }:
 
 let
-  platformInputs = pkgs.lib.optionals pkgs.stdenv.isLinux [
+  platformInputs = pkgs.lib.optionals pkgs.stdenv.hostPlatform.isLinux [
     pkgs.sound-theme-freedesktop # bell.oga
   ] ++ pkgs.lib.optionals (herdr != null) [ herdr ];
 
   # Som tocado quando do_beep está ativo (Linux). No Mac usa afplay direto.
   bellSoundLinux =
-    if pkgs.stdenv.isLinux
+    if pkgs.stdenv.hostPlatform.isLinux
     then "${pkgs.sound-theme-freedesktop}/share/sounds/freedesktop/stereo/bell.oga"
     else "";
 in

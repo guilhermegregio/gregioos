@@ -3,7 +3,7 @@ let
   # O comando por baixo muda de plataforma, o alias não: `fr` e `fu` são os
   # mesmos nas três máquinas. O `--hostname` casa com o attr em
   # nixosConfigurations/darwinConfigurations, que é o hostname real.
-  nh = if pkgs.stdenv.isDarwin then "nh darwin" else "nh os";
+  nh = if pkgs.stdenv.hostPlatform.isDarwin then "nh darwin" else "nh os";
 in {
   programs.zsh = {
     enable = true;
@@ -50,7 +50,7 @@ in {
 
       ls-env = "fd -H -I -t f -E node_modules -E .git -E .next -E .direnv -E .nx -E .turbo -E .cache -E dist -E build '^\\.env'";
       ls-tmux = "tmux list-panes -a -F '#S:#I.#P | #{pane_current_command} | #{pane_title}'";
-    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+    } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       # `switch-to-configuration` é do NixOS; `steam-run` é o wrapper FHS
       # daqui; e o binário do zed-editor no nixpkgs chama-se `zeditor` (no
       # macOS o cask já instala como `zed`).
