@@ -10,7 +10,12 @@ let
   verify-app = import ../../modules/scripts/verify-app.nix { inherit pkgs; };
 in {
   # Ferramentas do monorepo mobile — não fazem sentido no Mac pessoal.
-  environment.systemPackages = [ xcode15 verify-app ];
+  environment.systemPackages = [
+    xcode15
+    verify-app
+    pkgs.android-tools
+    pkgs.sdkmanager
+  ];
 
   # GID do nixbld desta instalação de Nix. Confirmar com:
   #   dscl . -read /Groups/nixbld PrimaryGroupID
