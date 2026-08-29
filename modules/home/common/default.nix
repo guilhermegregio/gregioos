@@ -18,7 +18,6 @@
     ./zsh.nix
     ./nushell.nix
     # editors
-    ./helix.nix
     ./nvim.nix
   ];
 }

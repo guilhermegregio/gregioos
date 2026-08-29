@@ -43,8 +43,7 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
 - **[herdr](https://herdr.dev)** — o multiplexer, usado em todas as máquinas:
   workspaces, panes e agentes de IA
 - **Terminais** — [ghostty](https://ghostty.org) e wezterm
-- **Editores** — Neovim (LazyVim, config em `modules/home/common/nvim/`) e
-  [helix](https://helix-editor.com)
+- **Editor** — Neovim (LazyVim, config em `modules/home/common/nvim/`)
 - **Git** — git com [delta](https://github.com/dandavison/delta), lazygit, tig,
   `gh` e `gh-dash`
 - **CLI** — eza, fd, ripgrep, bat, jq, yq, httpie, yazi, btop, fastfetch

@@ -21,7 +21,7 @@ in {
 
       shellAliases = {
         g = "git";
-        v = "hx";
+        v = "nvim";
         top = "btop";
         htop = "btop";
         cat = "bat";
