@@ -1,6 +1,6 @@
 # MacBook de trabalho (Stone). Tudo aqui é o que NÃO pode vazar para o Mac
 # pessoal: CA corporativa, tokens e o toolchain mobile.
-{ pkgs, ... }:
+{ config, pkgs, username, ... }:
 let
   # Bundle gerado na máquina (runbook, fase 3) — não versionado, o config só
   # aponta para o caminho.
@@ -40,12 +40,34 @@ in {
     # o Node (usado por LSPs e ferramentas do nvim) lê esta, não as de cima
     NODE_EXTRA_CA_CERTS = caBundle;
 
-    # FIXME: placeholders, como já era no dotfiles — preenchidos na máquina.
-    # Follow-up 7.4 do plano: mover para agenix e parar de versionar o campo.
+    # Username não é segredo; os tokens saíram daqui para o sops (abaixo).
     MOBILE_PLATFORM_GITHUB_USERNAME = "guilhermegregio";
-    MOBILE_PLATFORM_GITHUB_TOKEN = "<REPLACE>";
-    CUSTOM_GITHUB_PERSONAL_ACCESS_TOKEN_PACKAGE = "<REPLACE>";
-    TEMP_TAP_SDK_IOS_TOKEN = "<REPLACE>";
+  };
+
+  # Tokens da Stone: cifrados em secrets/tokens.yaml, decriptados na ativação
+  # para /run/secrets, fora do store. O valor nunca passa pela avaliação do
+  # Nix — é o `placeholder` que garante isso.
+  sops = {
+    defaultSopsFile = ../../secrets/tokens.yaml;
+    age.sshKeyPaths = [ "/Users/${username}/.ssh/id_ed25519" ];
+
+    secrets = {
+      mobile_platform_github_token.owner = username;
+      custom_github_pat_package.owner = username;
+      temp_tap_sdk_ios_token.owner = username;
+    };
+
+    # Um arquivo só para o zsh dar source, em vez de três. O sourcing está em
+    # modules/home/darwin/default.nix, via osConfig.
+    templates."dev-env" = {
+      owner = username;
+      mode = "0400";
+      content = ''
+        export MOBILE_PLATFORM_GITHUB_TOKEN="${config.sops.placeholder.mobile_platform_github_token}"
+        export CUSTOM_GITHUB_PERSONAL_ACCESS_TOKEN_PACKAGE="${config.sops.placeholder.custom_github_pat_package}"
+        export TEMP_TAP_SDK_IOS_TOKEN="${config.sops.placeholder.temp_tap_sdk_ios_token}"
+      '';
+    };
   };
 
   # Toolchain iOS/Android e apps corporativos — só nesta máquina.

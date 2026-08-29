@@ -4,3 +4,8 @@ result-*
 
 # grafo do graphify versionado via allowlist (graphify-out/.gitignore):
 # só graph.json+manifest.json; cache/html/relatórios ficam de fora (onda3 T06).
+
+# chave privada do sops — nunca versionar
+.config/sops/
+*.age
+keys.txt

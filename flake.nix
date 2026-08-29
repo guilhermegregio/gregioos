@@ -18,6 +18,10 @@
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
 
+    # Segredos cifrados no repo, decriptados na ativação (ver hosts/CV9NF4V0H6).
+    sops-nix.url = "github:Mic92/sops-nix";
+    sops-nix.inputs.nixpkgs.follows = "nixpkgs";
+
     # Linux-only — não referenciar em módulos comuns nem darwin
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
     stylix.url = "github:danth/stylix";
@@ -65,6 +69,7 @@
           specialArgs = { inherit inputs username host; };
           modules = [
             inputs.nix-index-database.darwinModules.nix-index
+            inputs.sops-nix.darwinModules.sops
             ./modules/darwin
             ./hosts/${host}
 
