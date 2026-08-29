@@ -12,6 +12,12 @@ com permissão `0400`.
 
 Tudo aqui roda **no Mac de trabalho** (`CV9NF4V0H6`), onde está a sua chave.
 
+> **Sobre o `nix shell` nos comandos abaixo:** o `sops` e o `ssh-to-age` estão
+> declarados no config (`modules/home/darwin/packages.nix` e, no NixOS,
+> `modules/core/packages.nix`), mas só entram no PATH **depois** do primeiro
+> `fr` — e o `fr` depende de o `secrets/tokens.yaml` existir. Por isso o
+> bootstrap usa `nix shell`. Da segunda edição em diante é só `sops`.
+
 ---
 
 ## Passo 1 — a chave age
@@ -104,7 +110,7 @@ e a de `key_groups`, esquecer a segunda é o erro fácil — e recifre a partir 
 uma máquina que já decripta:
 
 ```bash
-nix shell "nixpkgs#sops" -c sops updatekeys secrets/tokens.yaml
+sops updatekeys secrets/tokens.yaml
 ```
 
 Aqui o `updatekeys` funciona, porque a máquina que roda ainda tem a sua chave
@@ -206,7 +212,7 @@ Failed to get the data key required to decrypt the SOPS file.
 
 ```bash
 # corrija o .sops.yaml primeiro, depois:
-nix shell "nixpkgs#sops" -c sops updatekeys secrets/tokens.yaml
+sops updatekeys secrets/tokens.yaml
 ```
 
 ### Caso B — não tem (ou os valores eram de teste): recrie
@@ -271,6 +277,7 @@ git add -A
 | chave SSH com passphrase | não suportado pelo sops; gere uma sem senha e some a age pública dela ao `.sops.yaml` |
 
 **Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
+O `sops` já está no PATH das três máquinas.
 Nenhum passo manual na máquina.
 
 **Backup da chave privada:** ela não está no repo, de propósito. Se você perder

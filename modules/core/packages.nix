@@ -61,6 +61,10 @@ in {
     jq
     yq
     httpie
+
+    # segredos — editar secrets/*.yaml deste repo sem `nix shell`
+    sops
+    ssh-to-age
     television
     notify-beep
     notify-jump

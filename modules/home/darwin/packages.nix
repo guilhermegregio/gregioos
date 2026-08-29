@@ -51,6 +51,10 @@ in {
     jq
     yq
 
+    # segredos — editar secrets/*.yaml sem `nix shell`
+    sops
+    ssh-to-age
+
     # git e github
     gh-dash
     tig
