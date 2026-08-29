@@ -1,32 +1,10 @@
-{ ... }:
-{
-  imports = [
-    ./btop.nix
-    ./direnv.nix
-    ./fastfetch.nix
-    ./fzf.nix
-    ./gh.nix
-    ./zoxide.nix
-    ./git.nix
-    ./starship.nix
-    ./dconf.nix
-    ./stylix.nix
-    ./nixpkgs.nix
-    # Terminals
-    ./kitty.nix
-    ./wezterm.nix
-    ./ghostty.nix
-    # shells
-    ./bash.nix
-    ./zsh.nix
-    ./nushell.nix
-    # terminal multiplexer
-    ./zellij.nix
-    ./tmux.nix
-    # editors
-    ./helix.nix
-    ./zed.nix
-    ./nvim.nix
-    ./obs-studio.nix
-  ];
+# Ponto de entrada do home-manager nas três máquinas. `common` vale em todas;
+# a segunda camada entra pela plataforma.
+#
+# `hostPlatform` vem de specialArgs, não de `pkgs.stdenv`: referenciar `pkgs`
+# (ou qualquer coisa derivada de `config`) dentro de `imports` dá recursão
+# infinita, já que os imports é que produzem o `config`.
+{ hostPlatform, ... }: {
+  imports = [ ./common ]
+    ++ (if hostPlatform == "darwin" then [ ./darwin ] else [ ./linux ]);
 }

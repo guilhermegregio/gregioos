@@ -1,4 +1,10 @@
-{ pkgs, profile, config, ... }: {
+{ pkgs, lib, host, config, ... }:
+let
+  # O comando por baixo muda de plataforma, o alias não: `fr` e `fu` são os
+  # mesmos nas três máquinas. O `--hostname` casa com o attr em
+  # nixosConfigurations/darwinConfigurations, que é o hostname real.
+  nh = if pkgs.stdenv.isDarwin then "nh darwin" else "nh os";
+in {
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -30,14 +36,10 @@
     shellAliases = {
       g = "git";
       sv = "sudo nvim";
-      fr = "nh os switch --hostname ${profile}";
-      fu = "nh os switch --hostname ${profile} --update";
-      ncg =
-        "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+      fr = "${nh} switch --hostname ${host}";
+      fu = "${nh} switch --hostname ${host} --update";
 
       v = "nvim";
-      zed = "zeditor";
-      claude = "steam-run claude";
       #cat = "bat";
       ls = "eza --icons";
       ll = "eza -lh --icons --grid --group-directories-first";
@@ -48,6 +50,14 @@
 
       ls-env = "fd -H -I -t f -E node_modules -E .git -E .next -E .direnv -E .nx -E .turbo -E .cache -E dist -E build '^\\.env'";
       ls-tmux = "tmux list-panes -a -F '#S:#I.#P | #{pane_current_command} | #{pane_title}'";
+    } // lib.optionalAttrs pkgs.stdenv.isLinux {
+      # `switch-to-configuration` é do NixOS; `steam-run` é o wrapper FHS
+      # daqui; e o binário do zed-editor no nixpkgs chama-se `zeditor` (no
+      # macOS o cask já instala como `zed`).
+      ncg =
+        "nix-collect-garbage --delete-old && sudo nix-collect-garbage -d && sudo /run/current-system/bin/switch-to-configuration boot";
+      zed = "zeditor";
+      claude = "steam-run claude";
     };
 
     plugins = [

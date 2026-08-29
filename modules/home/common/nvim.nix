@@ -20,7 +20,7 @@
   };
 
   home.activation.linkNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-    NVIM_SRC="${config.home.homeDirectory}/gregioos/modules/home/nvim"
+    NVIM_SRC="${config.home.homeDirectory}/gregioos/modules/home/common/nvim"
     NVIM_DST="${config.xdg.configHome}/nvim"
     run mkdir -p "${config.xdg.configHome}"
     if [ -e "$NVIM_DST" ] && [ ! -L "$NVIM_DST" ]; then

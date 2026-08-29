@@ -98,9 +98,12 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
-                extraSpecialArgs = { inherit inputs username host; };
+                extraSpecialArgs = {
+                  inherit inputs username host;
+                  hostPlatform = "darwin";
+                };
                 users.${username} = {
-                  imports = [ ./modules/home/darwin ];
+                  imports = [ ./modules/home ];
                   home.stateVersion =
                     (import ./hosts/${host}/variables.nix).homeStateVersion;
                   programs.home-manager.enable = true;

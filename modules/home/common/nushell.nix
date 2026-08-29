@@ -1,4 +1,6 @@
-{ pkgs, profile, ... }: {
+{ pkgs, lib, host, ... }:
+let nh = if pkgs.stdenv.isDarwin then "nh darwin" else "nh os";
+in {
   programs = {
     nushell = {
       enable = true;
@@ -8,6 +10,7 @@
         $env.config = {
           show_banner: false
         }
+      '' + lib.optionalString pkgs.stdenv.isLinux ''
 
         def ncg [] {
             nix-collect-garbage --delete-old
@@ -23,8 +26,8 @@
         htop = "btop";
         cat = "bat";
 
-        fr = "nh os switch --hostname ${profile}";
-        fu = "nh os switch --hostname ${profile} --update";
+        fr = "${nh} switch --hostname ${host}";
+        fu = "${nh} switch --hostname ${host} --update";
 
         l = "ls";
         ls = "eza --icons";

@@ -14,7 +14,8 @@ let
 in {
   home.packages = [ pkgs.sesh ];
 
-  stylix.targets.tmux.enable = false;
+  # O `stylix.targets.tmux` mora em ../linux/stylix.nix: stylix é Linux-only
+  # aqui, e declarar a opção neste módulo quebraria o eval no macOS.
 
   xdg.configFile."sesh/sesh.toml".text = ''
     blacklist = ["scratch"]

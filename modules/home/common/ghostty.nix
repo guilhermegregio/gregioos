@@ -1,7 +1,10 @@
 { pkgs, ... }: {
   programs.ghostty = {
     enable = true;
-    package = pkgs.ghostty;
+    # No macOS o Ghostty vem do cask (modules/darwin/homebrew.nix) e o pacote
+    # do nixpkgs não builda para darwin. `package = null` é o caso previsto
+    # pelo módulo: escreve a config sem instalar o binário.
+    package = if pkgs.stdenv.isDarwin then null else pkgs.ghostty;
     settings = {
       window-theme = "dark";
       macos-option-as-alt = true;

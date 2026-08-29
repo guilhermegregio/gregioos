@@ -1,5 +1,5 @@
 { host, ... }:
-let inherit (import ../../hosts/${host}/variables.nix) gitUsername gitEmail;
+let inherit (import ../../../hosts/${host}/variables.nix) gitUsername gitEmail;
 in {
   programs.delta = {
     enable = true;

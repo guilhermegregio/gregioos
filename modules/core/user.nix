@@ -13,7 +13,10 @@ in {
     useUserPackages = true;
     # useGlobalPkgs = true;
     backupFileExtension = "backup";
-    extraSpecialArgs = {inherit inputs username host profile;};
+    extraSpecialArgs = {
+      inherit inputs username host profile;
+      hostPlatform = "linux";
+    };
     users.${username} = {
       imports = [./../home];
       home = {
