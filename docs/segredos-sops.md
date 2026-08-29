@@ -45,22 +45,28 @@ editar os segredos estando no Mac de trabalho. A chave age do
 `gregio-asus-tuf-f15` já está derivada abaixo (é pública — vem da
 `id_ed25519.pub` daquela máquina):
 
+As âncoras levam o nome da máquina, não do papel — `stone` e `tuf` dizem de
+quem é a chave; `work` e `nixos` não sobrevivem à terceira máquina.
+
 ```bash
 cd ~/gregioos
-WORK=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
-NIXOS=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+STONE=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
+TUF=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
 
 cat > .sops.yaml <<EOF
+# Quem pode decriptar. Público — a chave age deriva da .pub de cada máquina.
 keys:
-  - &work  $WORK
-  - &nixos $NIXOS
+  - &stone $STONE   # CV9NF4V0H6 — MacBook de trabalho
+  - &tuf   $TUF   # gregio-asus-tuf-f15 — NixOS
+  # - &nxt   age1...   # nxt-os-01 — preencher no bootstrap (fase 6)
 
 creation_rules:
   - path_regex: secrets/.*\.yaml\$
     key_groups:
       - age:
-          - *work
-          - *nixos
+          - *stone
+          - *tuf
+          # - *nxt
 EOF
 cat .sops.yaml
 ```
@@ -68,10 +74,28 @@ cat .sops.yaml
 Cada chave listada consegue decriptar de forma independente — não é um esquema
 de "n de m".
 
-Quando o `nxt-os-01` existir, a chave dele entra na lista e você roda
-`sops updatekeys secrets/tokens.yaml`. **Só é obrigatório para máquinas que vão
-consumir segredos**: uma máquina que só edita precisa estar na lista; uma que
-decripta na ativação, se não estiver, falha o switch.
+### Quando o `nxt-os-01` chegar
+
+O slot já está no arquivo, comentado. No bootstrap (fase 6), na máquina nova:
+
+```bash
+nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub
+```
+
+Cole o valor no lugar do `age1...`, descomente as **duas** linhas — a de `keys`
+e a de `key_groups`, esquecer a segunda é o erro fácil — e recifre a partir de
+uma máquina que já decripta:
+
+```bash
+nix shell "nixpkgs#sops" -c sops updatekeys secrets/tokens.yaml
+```
+
+Aqui o `updatekeys` funciona, porque a máquina que roda ainda tem a sua chave
+válida no arquivo.
+
+**Só é obrigatório para máquinas que vão consumir segredos:** uma que apenas
+edita precisa estar na lista; uma que decripta na ativação e não está **falha o
+switch**.
 
 ### Editar os segredos a partir do NixOS
 
@@ -177,21 +201,24 @@ refazer é seguro e mais rápido:
 cd ~/gregioos
 
 # 1. as duas chaves reais no .sops.yaml
-WORK=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
-NIXOS=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
-echo "work=$WORK"
+STONE=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
+TUF=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+echo "stone=$STONE"
 
 cat > .sops.yaml <<EOF
+# Quem pode decriptar. Público — a chave age deriva da .pub de cada máquina.
 keys:
-  - &work  $WORK
-  - &nixos $NIXOS
+  - &stone $STONE   # CV9NF4V0H6 — MacBook de trabalho
+  - &tuf   $TUF   # gregio-asus-tuf-f15 — NixOS
+  # - &nxt   age1...   # nxt-os-01 — preencher no bootstrap (fase 6)
 
 creation_rules:
   - path_regex: secrets/.*\.yaml\$
     key_groups:
       - age:
-          - *work
-          - *nixos
+          - *stone
+          - *tuf
+          # - *nxt
 EOF
 
 # 2. a privada onde o CLI a encontra — sem isto você cifra mas não reabre
