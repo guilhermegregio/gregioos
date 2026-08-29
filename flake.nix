@@ -98,6 +98,11 @@
               home-manager = {
                 useGlobalPkgs = true;
                 useUserPackages = true;
+                # Sem isto a ativação aborta em qualquer arquivo que já exista
+                # e não tenha sido criado pelo home-manager (gh, btop e afins
+                # escrevem os seus no primeiro uso). Mesmo valor do NixOS, em
+                # modules/core/user.nix.
+                backupFileExtension = "backup";
                 extraSpecialArgs = {
                   inherit inputs username host;
                   hostPlatform = "darwin";
