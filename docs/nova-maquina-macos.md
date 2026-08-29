@@ -134,12 +134,34 @@ Taps de terceiros exigem confirmação manual — não é declarativo:
 Caminho absoluto de propósito: o `brew` só entra no PATH depois que a ativação
 do home-manager completa, e ela não completa enquanto o bundle falhar.
 
-## 9. Segredos
+## 9. Dotfiles
+
+O gregioos instala os binários; as configs de `~/.config` vêm do repo
+[dotfiles](https://github.com/guilhermegregio/dotfiles), via GNU stow.
+
+**A ordem importa:** o `fr` do passo 7 é quem remove os arquivos que o
+home-manager gerenciava. Só depois o stow tem espaço para criar os dele.
+
+```bash
+git clone https://github.com/guilhermegregio/dotfiles.git ~/code/dotfiles
+cd ~/code/dotfiles
+./install.sh
+```
+
+> Se o `stow` não for encontrado, abra um **terminal novo** — ele vem do
+> `fr` e só entra no PATH em sessão nova. Para destravar sem esperar:
+> `nix shell "nixpkgs#stow" -c ./install.sh`.
+
+> `stow` é atômico: se **um** pacote conflita, nenhum é aplicado. A mensagem
+> aponta o arquivo; normalmente é algo que o gregioos ainda gera, ou um
+> arquivo real onde deveria haver link.
+
+## 10. Segredos
 
 Só se a máquina for **consumir** segredos. Ver
 [segredos-sops.md](./segredos-sops.md).
 
-## 10. Verificação
+## 11. Verificação
 
 Abra um **terminal novo**:
 
@@ -189,7 +211,8 @@ ser melhor.
 2. Chave SSH no GitHub (passo 4)
 3. `brew trust` de cada tap de terceiro (passo 8)
 4. Autorizar a chave nos segredos
-5. Login em apps de GUI
+5. `./install.sh` do dotfiles
+6. Login em apps de GUI
 
 ## Problemas conhecidos
 

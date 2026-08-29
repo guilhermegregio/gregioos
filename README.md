@@ -14,6 +14,22 @@ mundos — o ambiente de terminal é o mesmo em qualquer uma delas.
 O attr **é o hostname real** da máquina. No macOS isso faz `darwin-rebuild
 --flake .` resolver o host sozinho, sem `#nome`.
 
+## Este repo é metade do setup
+
+| | |
+| --- | --- |
+| **gregioos** (aqui) | sistema, pacotes e o que depende de host ou plataforma |
+| **[dotfiles](https://github.com/guilhermegregio/dotfiles)** | os arquivos de `~/.config` que se editam |
+
+A razão da divisão é prática: config gerada pelo nix vira symlink read-only no
+store, e mudar uma linha exigiria `fr`. No dotfiles, gerenciado com
+[GNU stow](https://www.gnu.org/software/stow/), editar é editar — o efeito é
+imediato e o `git diff` mostra o que mudou.
+
+O critério de qual vai onde: **depende de host, plataforma ou nix store → fica
+aqui; config pura que se itera → vai para o dotfiles.** Cada arquivo tem um
+dono só; os dois nunca gerenciam o mesmo.
+
 ## Um comando só, nas três
 
 ```bash
@@ -43,7 +59,7 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
 - **[herdr](https://herdr.dev)** — o multiplexer, usado em todas as máquinas:
   workspaces, panes e agentes de IA
 - **Terminal** — [ghostty](https://ghostty.org)
-- **Editor** — Neovim (LazyVim, config em `modules/home/common/nvim/`)
+- **Editor** — Neovim (LazyVim; a config vive no repo dotfiles)
 - **Git** — git com [delta](https://github.com/dandavison/delta), lazygit, tig,
   `gh` e `gh-dash`
 - **CLI** — eza, fd, ripgrep, bat, jq, yq, httpie, yazi, btop, fastfetch
@@ -89,7 +105,7 @@ modules/
   home/
     common/               # home-manager das TRÊS máquinas
     linux/                # dconf, stylix, zed, obs
-    darwin/               # aerospace, nh, CLIs do mac
+    darwin/               # nh e CLIs do mac
   scripts/                # derivations de scripts próprios
 profiles/nvidia-laptop/   # hardware + drivers + core (NixOS)
 secrets/                  # cifrado com sops; seguro no repo

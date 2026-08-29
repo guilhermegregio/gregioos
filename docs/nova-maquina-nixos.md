@@ -102,7 +102,20 @@ Depois do reboot, clone o repo em `~/gregioos` (o caminho está no `NH_FLAKE` do
 git clone https://github.com/guilhermegregio/gregioos.git ~/gregioos
 ```
 
-## 7. Verificação
+## 7. Dotfiles
+
+O gregioos instala os binários; as configs de `~/.config` vêm do repo
+[dotfiles](https://github.com/guilhermegregio/dotfiles), via GNU stow. **Depois
+do primeiro `fr`**, que é quem libera os arquivos antes gerenciados pelo
+home-manager:
+
+```bash
+git clone https://github.com/guilhermegregio/dotfiles.git ~/code/dotfiles
+cd ~/code/dotfiles
+./install.sh
+```
+
+## 8. Verificação
 
 Terminal novo:
 
@@ -114,13 +127,13 @@ for c in eza fd rg herdr tig yazi gh nvim zellij sops; do
   command -v $c >/dev/null && echo "ok    $c" || echo "FALTA $c"
 done
 
-ls -l ~/.config/nvim      # -> ~/gregioos/modules/home/common/nvim
+ls -l ~/.config/nvim      # -> ~/code/dotfiles/nvim/.config/nvim
 ```
 
 E o visual: GNOME com o tema do Stylix (catppuccin-mocha), teclado `us intl`
 com CapsLock como AltGr.
 
-## 8. Segredos (opcional)
+## 9. Segredos (opcional)
 
 Para **editar** os segredos do repo desta máquina, ver
 [segredos-sops.md](./segredos-sops.md). Hoje nenhum host NixOS *consome*
