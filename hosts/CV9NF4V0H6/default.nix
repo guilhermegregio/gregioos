@@ -79,6 +79,10 @@ in {
       "intellij-idea-ce"
       "zoom"
       "slack"
+      # runtime de containers desta máquina (contexto `desktop-linux`); é ele
+      # quem fornece o cliente `docker` em /usr/local/bin. No pessoal o runtime
+      # é o colima, e lá o cliente vem do nix.
+      "docker-desktop"
     ];
   };
 }

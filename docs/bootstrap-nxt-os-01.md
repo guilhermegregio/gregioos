@@ -84,21 +84,27 @@ dscl . -read /Groups/nixbld PrimaryGroupID
 Se der 350, `hosts/nxt-os-01/default.nix` já está certo. Instalações antigas
 usavam 30000 — nesse caso ajuste `ids.gids.nixbld` e commite.
 
-## 6. Decidir o runtime de containers
+## 6. Containers — já resolvido
 
-Hoje o config traz **os dois**: o cask `docker-desktop` (comum) e o `colima`
-(pacote). No Mac de trabalho o ativo é o Docker Desktop; aqui você disse que
-prefere colima.
+Nada a decidir aqui, mas vale saber o desenho:
 
-Se for só colima, edite antes do primeiro switch:
+| | trabalho | pessoal |
+|---|---|---|
+| runtime | Docker Desktop (cask) | **colima** (nix) |
+| cliente `docker` | vem do Desktop, em `/usr/local/bin` | vem do nix |
 
-- tire `"docker-desktop"` de `modules/darwin/homebrew.nix` e ponha em
-  `hosts/CV9NF4V0H6/default.nix`
-- acrescente `pkgs.docker` em `hosts/nxt-os-01/default.nix` — sem o Docker
-  Desktop, o cliente precisa vir do nix
+O `colima` sobe a VM, mas **não** fornece o binário com que se fala com ela —
+no macOS quem costuma instalar o cliente é o Docker Desktop. Como aqui ele não
+existe, `docker` e `docker-compose` estão declarados em
+`hosts/nxt-os-01/default.nix`.
 
-Se mantiver os dois, não mexa em nada: o Docker Desktop é gratuito para uso
-pessoal.
+Depois do switch, para subir a VM na primeira vez:
+
+```bash
+colima start
+docker context ls    # deve mostrar `colima` como ativo
+docker run --rm hello-world
+```
 
 ## 7. Primeiro build
 
@@ -185,7 +191,7 @@ darwin-rebuild --version
 alias fr                      # nh darwin switch --hostname nxt-os-01
 fr                            # deve dizer "No version or size changes"
 
-for c in eza fd rg herdr tig yazi gh nvim zellij sops; do
+for c in eza fd rg herdr tig yazi gh nvim zellij sops colima docker; do
   command -v $c >/dev/null && echo "ok    $c" || echo "FALTA $c"
 done
 

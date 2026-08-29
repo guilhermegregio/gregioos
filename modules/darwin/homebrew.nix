@@ -34,7 +34,6 @@
 
       # utilitários
       "sf-symbols"
-      "docker-desktop"
       "obs"
     ];
   };
