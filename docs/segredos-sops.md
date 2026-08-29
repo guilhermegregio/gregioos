@@ -282,6 +282,7 @@ os destinatários reais do arquivo e diz onde está o descompasso:
 | sops lista `~/.ssh/id_rsa` entre os lugares que tentou | é só ruído: ele testa `id_ed25519` **e** `id_rsa`, e lista os que não existem. O erro real é o `identity did not match` acima |
 | `~/.config/sops/age/keys.txt` ignorado no Mac | no macOS o sops procura em `~/Library/Application Support/sops/age/keys.txt`. Use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` |
 | chave SSH com passphrase | não suportado pelo sops; gere uma sem senha e some a age pública dela ao `.sops.yaml` |
+| `unknown identity type` em `SOPS_AGE_KEY`/`SOPS_AGE_KEY_FILE` | essas duas querem identidade **age** (`AGE-SECRET-KEY-1…`), não chave SSH. Para chave SSH a variável é `SOPS_AGE_SSH_PRIVATE_KEY_FILE`, já declarada no config. `unset SOPS_AGE_KEY SOPS_AGE_KEY_FILE` |
 
 **Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
 O `sops` já está no PATH das três máquinas.
