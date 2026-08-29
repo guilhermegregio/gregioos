@@ -32,8 +32,13 @@ in {
     NIX_SSL_CERT_FILE = caBundle;
     SSL_CERT_FILE = caBundle;
     CURL_CA_BUNDLE = caBundle;
-    GIT_SSL_CAPATH = caBundle;
     REQUESTS_CA_BUNDLE = caBundle;
+    # CAINFO é o arquivo; CAPATH seria um diretório de certificados com hashes.
+    # O dotfiles usava CAPATH apontando para o .pem, o que o git ignora — era o
+    # motivo de o lazy.nvim falhar ao clonar plugins atrás do Netskope.
+    GIT_SSL_CAINFO = caBundle;
+    # o Node (usado por LSPs e ferramentas do nvim) lê esta, não as de cima
+    NODE_EXTRA_CA_CERTS = caBundle;
 
     # FIXME: placeholders, como já era no dotfiles — preenchidos na máquina.
     # Follow-up 7.4 do plano: mover para agenix e parar de versionar o campo.

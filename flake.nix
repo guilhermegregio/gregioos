@@ -7,10 +7,13 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     # macOS — usados pelos hosts darwin (ver darwinConfigurations).
-    # O nix-darwin exige que sua branch de release case com a do nixpkgs; o
-    # master é 26.11 e quebraria o eval contra o nixpkgs 26.05 do lock. Ao
-    # subir o nixpkgs para a próxima release, subir esta branch junto.
-    darwin.url = "github:nix-darwin/nix-darwin/nix-darwin-26.05";
+    #
+    # O nix-darwin verifica que sua release casa com a do nixpkgs e aborta o
+    # eval se divergirem. `master` é o par das branches unstable; uma
+    # `nix-darwin-YY.MM` só casa com `nixpkgs-YY.MM-darwin`. Como aqui o
+    # nixpkgs segue unstable, o par certo é master — e os dois têm de subir
+    # no mesmo `nix flake update`, que é o que o `fu` faz.
+    darwin.url = "github:nix-darwin/nix-darwin/master";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
     nix-index-database.url = "github:nix-community/nix-index-database";
     nix-index-database.inputs.nixpkgs.follows = "nixpkgs";
