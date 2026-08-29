@@ -62,10 +62,10 @@ in {
     cookiecutter
     httpie
 
-    # containers. O `docker` vinha carona na dependência do colima e sumiria
-    # com o downgrade dele — declarado aqui para não depender disso de novo.
+    # O cliente docker NÃO entra aqui: quem o fornece é o Docker Desktop, em
+    # /usr/local/bin (contexto ativo `desktop-linux`, verificado em 2026-08-29).
+    # O `docker` que aparece no closure é dependência interna do colima e nunca
+    # esteve no PATH — declará-lo aqui sombrearia o binário do Desktop.
     colima
-    docker
-    docker-compose
   ];
 }
