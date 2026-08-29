@@ -6,6 +6,12 @@ passa para este repo, branch `multi-host`.
 **Nada aqui é irreversível.** O nix-darwin guarda as gerações antigas; a seção
 [Rollback](#rollback) volta tudo em um comando.
 
+> **Aspas em todo argumento com `#`.** O prezto liga `EXTENDED_GLOB` no zsh, e aí
+> o `#` vira operador de repetição — `nix build .#foo` morre com
+> `zsh: no matches found: .#foo` antes mesmo de o nix rodar. Os comandos abaixo
+> já vêm quotados. Ao escrever os seus, lembre: `".#attr"`, `"nixpkgs#pkg"`.
+> Alternativa: `noglob nix build .#foo`.
+
 ## O que já foi verificado por eval
 
 Não precisa conferir na máquina:
@@ -74,7 +80,7 @@ O passo demorado. Só baixa e compila; não altera nada da máquina.
 
 ```bash
 cd ~/gregioos
-nix build .#darwinConfigurations.CV9NF4V0H6.system
+nix build ".#darwinConfigurations.CV9NF4V0H6.system"
 ```
 
 Se reclamar de certificado, exporte a CA e repita:
@@ -96,7 +102,7 @@ Se der erro, veja [Problemas conhecidos](#problemas-conhecidos).
 Aqui você decide se segue.
 
 ```bash
-nix run nixpkgs#nvd -- diff "$(cat ~/system-antes-da-migracao.txt)" ./result
+nix run "nixpkgs#nvd" -- diff "$(cat ~/system-antes-da-migracao.txt)" ./result
 ```
 
 **Esperado ver:** muita mudança de versão (é outro nixpkgs), mais as entradas de
@@ -119,7 +125,7 @@ switch pode falhar no meio, quando o daemon for buscar algo.
 
 ```bash
 cd ~/gregioos
-sudo -E darwin-rebuild switch --flake .#CV9NF4V0H6
+sudo -E darwin-rebuild switch --flake ".#CV9NF4V0H6"
 ```
 
 ### Se reclamar de arquivos em `/etc`
@@ -216,7 +222,7 @@ O `~/code/dotfiles` continua intacto, então voltar é sempre possível:
 
 ```bash
 sudo "$(cat ~/system-antes-da-migracao.txt)/sw/bin/darwin-rebuild" switch \
-  --flake ~/code/dotfiles#CV9NF4V0H6
+  --flake "$HOME/code/dotfiles#CV9NF4V0H6"
 ```
 
 Ou liste as gerações e escolha:
