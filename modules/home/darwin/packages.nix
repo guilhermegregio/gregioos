@@ -10,7 +10,8 @@
 # é específico de mobile/Stone fica em hosts/CV9NF4V0H6.
 { pkgs, inputs, ... }:
 let
-  herdrPkg = inputs.herdr.packages.${pkgs.system}.default;
+  # `pkgs.system` está deprecado desde o nixpkgs 25.11.
+  herdrPkg = inputs.herdr.packages.${pkgs.stdenv.hostPlatform.system}.default;
 
   notify-beep = import ../../scripts/notify-beep.nix {
     inherit pkgs;
