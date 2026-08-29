@@ -144,7 +144,7 @@
         # pessoal — username confirmado com `whoami` na fase 6.2
         nxt-os-01 = mkDarwin {
           host = "nxt-os-01";
-          username = "gregio";
+          username = "guilherme.gregio";
         };
       };
     };
