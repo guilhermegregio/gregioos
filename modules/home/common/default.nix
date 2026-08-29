@@ -9,6 +9,7 @@
     ./git.nix
     ./starship.nix
     ./nixpkgs.nix
+    ./sops.nix
     # Terminals
     ./wezterm.nix
     ./ghostty.nix
