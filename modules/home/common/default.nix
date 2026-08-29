@@ -11,7 +11,6 @@
     ./nixpkgs.nix
     ./sops.nix
     # Terminals
-    ./wezterm.nix
     ./ghostty.nix
     # shells
     ./bash.nix

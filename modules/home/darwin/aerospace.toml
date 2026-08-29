@@ -41,7 +41,7 @@ inherit-env-vars = true # If you don't touch "exec" section,
 PATH = '/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}'
 
 [mode.main.binding]
-alt-enter = 'exec-and-forget wezterm'
+alt-enter = 'exec-and-forget ghostty'
 alt-c = 'exec-and-forget caffeinate -disu'
 alt-x = 'exec-and-forget xcode15'
 
@@ -106,10 +106,6 @@ k = 'resize height -50'
 l = 'resize width +50'
 enter = 'mode main'
 esc = 'mode main'
-
-[[on-window-detected]]
-if.app-name-regex-substring = 'wezterm'
-run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
 if.app-name-regex-substring = 'ghostty'

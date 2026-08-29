@@ -42,7 +42,7 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
   [starship](https://starship.rs), fzf-tab, zoxide, direnv, carapace
 - **[herdr](https://herdr.dev)** — o multiplexer, usado em todas as máquinas:
   workspaces, panes e agentes de IA
-- **Terminais** — [ghostty](https://ghostty.org) e wezterm
+- **Terminal** — [ghostty](https://ghostty.org)
 - **Editor** — Neovim (LazyVim, config em `modules/home/common/nvim/`)
 - **Git** — git com [delta](https://github.com/dandavison/delta), lazygit, tig,
   `gh` e `gh-dash`
