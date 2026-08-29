@@ -161,7 +161,29 @@ cd ~/code/dotfiles
 Só se a máquina for **consumir** segredos. Ver
 [segredos-sops.md](./segredos-sops.md).
 
-## 11. Verificação
+## 11. Workspace e contrato com o agente (`kb scaffold`)
+
+O gregioos instala os binários, o dotfiles traz as configs; o `kb scaffold`
+prepara o **workspace** e o **CLAUDE.md global** — o que o agente precisa saber
+para trabalhar neste ecossistema:
+
+```bash
+kb scaffold --list                       # perfis disponíveis
+kb scaffold --profiles backend,frontend  # escolha o que esta máquina é
+```
+
+Ele cria `~/code`, `~/code/worktrees` (onde o `wtree` trabalha) e
+`~/code/.scratchpad` (temporários dos agentes, no lugar de um `/tmp` que você
+não enxerga), e escreve os blocos do `~/.claude/CLAUDE.md` entre marcadores
+`<!-- kb-scaffold:begin <bloco> vN -->`. Texto seu fora dos marcadores nunca é
+tocado, e rodar de novo só mexe no que mudou de versão. Para trocar a seleção
+depois, rode com outra lista de `--profiles`; `--dry-run` mostra antes.
+
+> ⚠️ Numa máquina cujo `~/.claude/CLAUDE.md` já foi escrito à mão, o scaffold
+> **anexa** os blocos ao fim em vez de adivinhar o que apagar. Migre o texto
+> antigo para dentro dos marcadores manualmente, uma vez.
+
+## 12. Verificação
 
 Abra um **terminal novo**:
 
@@ -170,12 +192,15 @@ darwin-rebuild --version
 alias fr                    # nh darwin switch --hostname <host>
 fr                          # deve dizer "No version or size changes"
 
-for c in eza fd rg herdr tig yazi gh nvim zellij sops; do
-  command -v $c >/dev/null && echo "ok    $c" || echo "FALTA $c"
-done
+kb doctor                   # o checklist da estação: sai 1 e diz o que falta
 
 nix-shell -p hello --run hello   # nix.nixPath declarado
 ```
+
+O `kb doctor` substitui o loop manual de `command -v`: confere as ferramentas do
+PATH (incluindo `claude`), o `~/gregioos`, o dotfiles com o stow realmente
+aplicado, o workspace e os blocos do CLAUDE.md — cada `✗` vem com o comando de
+correção pronto, já no dialeto da plataforma (`fu` no macOS).
 
 No visual: AeroSpace organizando as janelas, ghostty com JetBrainsMono Nerd
 Font, prompt do starship, e Touch ID funcionando dentro do zellij (`sudo -v`).
@@ -212,7 +237,8 @@ ser melhor.
 3. `brew trust` de cada tap de terceiro (passo 8)
 4. Autorizar a chave nos segredos
 5. `./install.sh` do dotfiles
-6. Login em apps de GUI
+6. `kb scaffold --profiles ...` (a seleção de perfis é escolha de quem usa a máquina)
+7. Login em apps de GUI
 
 ## Problemas conhecidos
 

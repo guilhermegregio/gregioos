@@ -14,12 +14,13 @@ mundos — o ambiente de terminal é o mesmo em qualquer uma delas.
 O attr **é o hostname real** da máquina. No macOS isso faz `darwin-rebuild
 --flake .` resolver o host sozinho, sem `#nome`.
 
-## Este repo é metade do setup
+## Este repo é uma parte do setup
 
 | | |
 | --- | --- |
 | **gregioos** (aqui) | sistema, pacotes e o que depende de host ou plataforma |
 | **[dotfiles](https://github.com/guilhermegregio/dotfiles)** | os arquivos de `~/.config` que se editam |
+| **`kb scaffold`** | o workspace (`~/code`, `worktrees`, `.scratchpad`) e o `~/.claude/CLAUDE.md` |
 
 A razão da divisão é prática: config gerada pelo nix vira symlink read-only no
 store, e mudar uma linha exigiria `fr`. No dotfiles, gerenciado com
@@ -29,6 +30,13 @@ imediato e o `git diff` mostra o que mudou.
 O critério de qual vai onde: **depende de host, plataforma ou nix store → fica
 aqui; config pura que se itera → vai para o dotfiles.** Cada arquivo tem um
 dono só; os dois nunca gerenciam o mesmo.
+
+O terceiro pedaço é o que o **agente** precisa para trabalhar aqui: os
+diretórios de trabalho e as regras do ecossistema no `~/.claude/CLAUDE.md`.
+Isso é do `kb scaffold` (engine `kb`, instalado por este repo), e o `kb doctor`
+é o checklist que diz o que ainda falta numa estação — cada `✗` já vem com o
+comando de correção. Ver os guias de
+[NixOS](./docs/nova-maquina-nixos.md) e [macOS](./docs/nova-maquina-macos.md).
 
 ## Um comando só, nas três
 

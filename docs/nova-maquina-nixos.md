@@ -115,7 +115,30 @@ cd ~/code/dotfiles
 ./install.sh
 ```
 
-## 8. Verificação
+## 8. Workspace e contrato com o agente (`kb scaffold`)
+
+O gregioos instala os binários, o dotfiles traz as configs; o `kb scaffold`
+prepara o **workspace** e o **CLAUDE.md global** — o que o agente precisa saber
+para trabalhar neste ecossistema:
+
+```bash
+kb scaffold --list                       # perfis disponíveis
+kb scaffold --profiles backend,frontend  # escolha o que esta máquina é
+```
+
+Ele cria `~/code`, `~/code/worktrees` (onde o `wtree` trabalha) e
+`~/code/.scratchpad` (temporários dos agentes, no lugar de um `/tmp` que você
+não enxerga), e escreve os blocos do `~/.claude/CLAUDE.md` entre marcadores
+`<!-- kb-scaffold:begin <bloco> vN -->`. Texto seu fora dos marcadores nunca é
+tocado, e rodar de novo só mexe no que mudou de versão. Para trocar a seleção
+depois, rode com outra lista de `--profiles`; `--dry-run` mostra antes.
+
+> ⚠️ Numa máquina cujo `~/.claude/CLAUDE.md` já foi escrito à mão, o scaffold
+> **anexa** os blocos ao fim em vez de adivinhar o que apagar. Migre o texto
+> antigo para dentro dos marcadores manualmente, uma vez, e o conteúdo passa a
+> viajar entre as máquinas.
+
+## 9. Verificação
 
 Terminal novo:
 
@@ -123,17 +146,20 @@ Terminal novo:
 alias fr                  # nh os switch --hostname <host>
 fr                        # deve dizer "No version or size changes"
 
-for c in eza fd rg herdr tig yazi gh nvim zellij sops; do
-  command -v $c >/dev/null && echo "ok    $c" || echo "FALTA $c"
-done
+kb doctor                 # o checklist da estação: sai 1 e diz o que falta
 
 ls -l ~/.config/nvim      # -> ~/code/dotfiles/nvim/.config/nvim
 ```
 
+O `kb doctor` substitui o loop manual de `command -v`: ele confere as
+ferramentas do PATH (incluindo `claude`), o `~/gregioos`, o dotfiles com o stow
+realmente aplicado, o workspace e os blocos do CLAUDE.md — e cada `✗` vem com o
+comando de correção pronto para copiar.
+
 E o visual: GNOME com o tema do Stylix (catppuccin-mocha), teclado `us intl`
 com CapsLock como AltGr.
 
-## 9. Segredos (opcional)
+## 10. Segredos (opcional)
 
 Para **editar** os segredos do repo desta máquina, ver
 [segredos-sops.md](./segredos-sops.md). Hoje nenhum host NixOS *consome*
