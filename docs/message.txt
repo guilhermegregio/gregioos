@@ -1,0 +1,56 @@
+gregioos ➜ ./dev/sops-doctor.sh                                                                                                                                   sops
+
+1. chave privada
+  ok    existe: /Users/guilherme.gregio/.ssh/id_ed25519
+
+2. passphrase (o sops NÃO suporta chave protegida)
+  ok    sem passphrase
+
+3. chave age derivada (pública)
+  ok    age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw
+
+4. destinatários declarados em .sops.yaml
+        age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+        age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw
+
+5. destinatários REAIS dentro de secrets/tokens.yaml
+        age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+        age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw
+
+6. veredito
+  ok    a sua chave está entre os destinatários — deve abrir
+        se ainda falhar, veja o item 2 (passphrase)
+
+7. ambiente
+        SOPS_AGE_SSH_PRIVATE_KEY_FILE = /Users/guilherme.gregio/.ssh/id_ed25519
+        SOPS_AGE_KEY_FILE             = /Users/guilherme.gregio/.ssh/id_ed25519
+        sops                          = /etc/profiles/per-user/guilherme.gregio/bin/sops
+gregioos ➜ sops secrets/tokens.yaml                                                                                                                               sops
+Failed to get the data key required to decrypt the SOPS file.
+
+Group 0: FAILED
+  age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw: FAILED
+    - | failed to create reader for decrypting sops data key with
+      | age: no identity matched any of the recipients. Errors while
+      | loading age identities: failed to parse 'SOPS_AGE_KEY' age
+      | identities: unknown identity type; failed to parse
+      | 'SOPS_AGE_KEY_FILE' age identities: unknown identity type.
+      | Did not find keys in locations
+      | 'SOPS_AGE_SSH_PRIVATE_KEY_CMD',
+      | '/Users/guilherme.gregio/.ssh/id_rsa', and
+      | 'SOPS_AGE_KEY_CMD'.
+
+  age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7: FAILED
+    - | failed to create reader for decrypting sops data key with
+      | age: no identity matched any of the recipients. Errors while
+      | loading age identities: failed to parse 'SOPS_AGE_KEY' age
+      | identities: unknown identity type; failed to parse
+      | 'SOPS_AGE_KEY_FILE' age identities: unknown identity type.
+      | Did not find keys in locations
+      | 'SOPS_AGE_SSH_PRIVATE_KEY_CMD',
+      | '/Users/guilherme.gregio/.ssh/id_rsa', and
+      | 'SOPS_AGE_KEY_CMD'.
+
+Recovery failed because no master key was able to decrypt the file. In
+order for SOPS to recover the file, at least one key has to be successful,
+but none were.
