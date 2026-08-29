@@ -27,7 +27,7 @@ modules/
   darwin/                    # sistema macOS: defaults, homebrew, touchid
   home/
     common/                  # home-manager das TRÊS máquinas
-    linux/                   # dconf, stylix, kitty, zed, obs
+    linux/                   # dconf, stylix, zed, obs
     darwin/                  # aerospace, herdr, nh, pacotes CLI do mac
   scripts/                   # derivations de scripts (wtree, notify-*, ...)
 profiles/nvidia-laptop/      # importa hardware + drivers + core (NixOS)

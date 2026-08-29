@@ -56,7 +56,7 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
 - **GNOME** com [Stylix](https://github.com/danth/stylix) (catppuccin-mocha),
   tema aplicado a GTK, Qt, terminais e editores de uma vez
 - **Teclado** `us` variante `intl` com CapsLock como AltGr (`lv3:caps_switch`)
-- kitty, zed, OBS Studio com plugins
+- zed, OBS Studio com plugins
 - zen-browser, brave, chromium, obsidian, VS Code
 - docker e libvirtd; drivers NVIDIA em `modules/drivers`
 
@@ -88,7 +88,7 @@ modules/
   darwin/                 # sistema macOS: defaults, homebrew, touchid
   home/
     common/               # home-manager das TRÊS máquinas
-    linux/                # dconf, stylix, kitty, zed, obs
+    linux/                # dconf, stylix, zed, obs
     darwin/               # aerospace, nh, CLIs do mac
   scripts/                # derivations de scripts próprios
 profiles/nvidia-laptop/   # hardware + drivers + core (NixOS)

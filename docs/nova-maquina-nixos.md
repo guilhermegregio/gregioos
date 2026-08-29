@@ -47,7 +47,7 @@ E o `hosts/<host>/variables.nix`, copiando de um existente:
   gitEmail = "voce@exemplo.com";
 
   browser  = "zen-browser";   # ou brave, google-chrome-stable
-  terminal = "ghostty";       # ou kitty
+  terminal = "ghostty";
 
   keyboardLayout = "us";
   consoleKeyMap  = "us";
