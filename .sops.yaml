@@ -1,8 +1,8 @@
 # Quem pode decriptar. Público — a chave age deriva da .pub de cada máquina.
 keys:
-  - &stone age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw   # CV9NF4V0H6 — MacBook de trabalho
+  - &stone age1wngewuwdn7a69dq995melqc3j8t27hdyfal49utv9e9j9ga8q5pq5lgxkw   # CV9NF4V0H6
   - &tuf   age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7   # gregio-asus-tuf-f15 — NixOS
-  # - &nxt   age1...   # nxt-os-01 — preencher no bootstrap (fase 6)
+  - &nxt   age1cdagdzypwt592r2fuvj7uzlltrpe9t06z4e0kuqkwdk7pxd4t9zqupqc5w   # nxt-os-01
 
 creation_rules:
   - path_regex: secrets/.*\.yaml$
@@ -10,4 +10,4 @@ creation_rules:
       - age:
           - *stone
           - *tuf
-          # - *nxt
+          - *nxt
