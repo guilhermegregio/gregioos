@@ -64,8 +64,10 @@ fi
 
 say "6. veredito"
 if echo "$RECIPIENTS" | rg -qx "$MINE"; then
-  ok "a sua chave está entre os destinatários — deve abrir"
-  inf "se ainda falhar, veja o item 2 (passphrase)"
+  ok "a sua chave está entre os destinatários"
+  # ter a chave certa não basta: o CLI precisa da identidade X25519, não da
+  # chave SSH. Ver o item 9.
+  inf "falta conferir a identidade que o CLI vai usar — item 9"
 else
   bad "a sua chave NÃO está entre os destinatários deste arquivo"
   inf "o .sops.yaml diz para quem arquivos NOVOS serão cifrados;"
@@ -109,4 +111,31 @@ if [ "$POISON" = 1 ]; then
   inf "SOPS_AGE_SSH_PRIVATE_KEY_FILE, que é a variável certa para chave SSH."
 elif [ -z "${SOPS_AGE_KEY_FILE:-}${SOPS_AGE_KEY:-}" ]; then
   ok "nenhuma variável conflitante"
+fi
+
+# Os recipients `age1...` do .sops.yaml são X25519 derivados por ssh-to-age. O
+# sops, ao ler uma chave SSH, usa `agessh` — outro esquema, cuja identidade não
+# decripta esses recipients. Por isso o CLI precisa do keys.txt.
+say "9. identidade para o CLI (keys.txt)"
+KEYS=${SOPS_AGE_KEY_FILE:-$HOME/.config/sops/age/keys.txt}
+if [ -f "$KEYS" ] && rg -q "AGE-SECRET-KEY-" "$KEYS" 2>/dev/null; then
+  ok "identidade age em $KEYS"
+  DERIVED=$(rg -o "# public key: age1[a-z0-9]+" "$KEYS" 2>/dev/null | rg -o "age1[a-z0-9]+")
+  if [ -n "$DERIVED" ] && [ "$DERIVED" != "$MINE" ]; then
+    bad "mas ela corresponde a $DERIVED, não à chave do item 3"
+  fi
+  if [ -z "${SOPS_AGE_KEY_FILE:-}" ]; then
+    inf "SOPS_AGE_KEY_FILE não está definida — no macOS o default é"
+    inf "~/Library/Application Support/sops/age/keys.txt, não ~/.config"
+    inf "conserte com: export SOPS_AGE_KEY_FILE=$KEYS"
+  fi
+else
+  bad "não há identidade age em $KEYS"
+  inf "a chave SSH sozinha NÃO decripta recipients age1... (esquemas diferentes)"
+  inf ""
+  inf "conserto:"
+  inf "  mkdir -p ~/.config/sops/age"
+  inf "  ssh-to-age -private-key -i $KEY > ~/.config/sops/age/keys.txt"
+  inf "  chmod 600 ~/.config/sops/age/keys.txt"
+  inf "  export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt"
 fi

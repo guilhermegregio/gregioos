@@ -32,29 +32,40 @@ git fetch origin && git checkout sops
 # a pública — vai para o .sops.yaml, é pública mesmo
 nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub
 
+# a identidade age que o CLI usa para editar. NUNCA vai para o repo.
+mkdir -p ~/.config/sops/age
+nix shell "nixpkgs#ssh-to-age" -c \
+  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+chmod 600 ~/.config/sops/age/keys.txt
+head -c 20 ~/.config/sops/age/keys.txt   # tem que começar com AGE-SECRET-KEY-
 ```
 
-> **Não é preciso gerar um `keys.txt`.** O sops lê a chave SSH diretamente, e o
-> config declara `SOPS_AGE_SSH_PRIVATE_KEY_FILE` apontando para
-> `~/.ssh/id_ed25519` — o primeiro lugar da ordem de busca dele. Basta abrir um
-> terminal novo depois do `fr`.
+> **Por que não basta apontar para a chave SSH.** Parece que `ssh-to-age` só
+> traduz um formato, mas há **dois esquemas diferentes** em jogo:
 >
-> Se precisar antes do primeiro switch, exporte na mão:
+> | esquema | recipient | identidade |
+> |---|---|---|
+> | X25519 derivado (`ssh-to-age`) | `age1…` | `AGE-SECRET-KEY-1…` |
+> | SSH nativo do age (`agessh`) | `ssh-ed25519 AAAA…` | a própria chave SSH |
 >
-> ```bash
-> export SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519
-> ```
+> O `.sops.yaml` usa `age1…`, o primeiro esquema. Mas quando o sops lê uma
+> chave SSH (via `SOPS_AGE_SSH_PRIVATE_KEY_FILE` ou de `~/.ssh/id_ed25519`),
+> ele a interpreta com `agessh` — o segundo. A identidade resultante é de outro
+> tipo e **não decripta** um arquivo cifrado para `age1…`, resultando em
+> `no identity matched any of the recipients` mesmo com a chave certa em mãos.
 >
-> **Por que não `~/.config/sops/age/keys.txt`:** o sops procura em
-> `<userConfigDir>/sops/age/keys.txt`, e no macOS isso é
-> `~/Library/Application Support/sops/age/keys.txt` — `os.UserConfigDir()` só
-> respeita `XDG_CONFIG_HOME` se ela estiver definida. O caminho `~/.config` vale
-> no Linux, não no Mac.
+> Daí o `keys.txt`: ele guarda a identidade X25519, que é a que casa.
+>
+> A variável é declarada no config (`SOPS_AGE_KEY_FILE`) porque o default do
+> sops é `<os.UserConfigDir()>/sops/age/keys.txt` — e no macOS isso é
+> `~/Library/Application Support`, não `~/.config`.
+>
+> **A ativação do sistema não depende disto.** Lá quem decripta é o módulo, com
+> `sops.age.sshKeyPaths`, que faz a conversão internamente — por isso o `fr`
+> funciona mesmo quando o `sops` da linha de comando não abre.
 >
 > ⚠️ **Chave com passphrase não funciona:** o sops não suporta chave SSH
-> protegida por senha. Teste com `ssh-keygen -y -P "" -f ~/.ssh/id_ed25519`;
-> se pedir senha, gere uma chave sem passphrase só para o sops e adicione a age
-> pública dela ao `.sops.yaml`.
+> protegida por senha. Teste com `ssh-keygen -y -P "" -f ~/.ssh/id_ed25519`.
 
 > Se você não tem `~/.ssh/id_ed25519`, gere com
 > `ssh-keygen -t ed25519 -C "guilherme.gregio@stone"` antes.
@@ -244,8 +255,13 @@ creation_rules:
           # - *nxt
 EOF
 
-# 2. a chave que o CLI vai usar (o config declara isto; aqui é para a sessão atual)
-export SOPS_AGE_SSH_PRIVATE_KEY_FILE=~/.ssh/id_ed25519
+# 2. a identidade age que o CLI vai usar (o config declara o caminho;
+#    aqui é para a sessão atual, antes do primeiro switch)
+mkdir -p ~/.config/sops/age
+nix shell "nixpkgs#ssh-to-age" -c \
+  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+chmod 600 ~/.config/sops/age/keys.txt
+export SOPS_AGE_KEY_FILE=~/.config/sops/age/keys.txt
 
 # 3. joga fora o antigo e cria de novo
 rm -f secrets/tokens.yaml
@@ -282,7 +298,8 @@ os destinatários reais do arquivo e diz onde está o descompasso:
 | sops lista `~/.ssh/id_rsa` entre os lugares que tentou | é só ruído: ele testa `id_ed25519` **e** `id_rsa`, e lista os que não existem. O erro real é o `identity did not match` acima |
 | `~/.config/sops/age/keys.txt` ignorado no Mac | no macOS o sops procura em `~/Library/Application Support/sops/age/keys.txt`. Use `SOPS_AGE_SSH_PRIVATE_KEY_FILE` |
 | chave SSH com passphrase | não suportado pelo sops; gere uma sem senha e some a age pública dela ao `.sops.yaml` |
-| `unknown identity type` em `SOPS_AGE_KEY`/`SOPS_AGE_KEY_FILE` | essas duas querem identidade **age** (`AGE-SECRET-KEY-1…`), não chave SSH. Para chave SSH a variável é `SOPS_AGE_SSH_PRIVATE_KEY_FILE`, já declarada no config. `unset SOPS_AGE_KEY SOPS_AGE_KEY_FILE` |
+| `unknown identity type` em `SOPS_AGE_KEY`/`SOPS_AGE_KEY_FILE` | essas querem identidade **age** (`AGE-SECRET-KEY-1…`). Apontá-las para uma chave SSH quebra o parse |
+| `no identity matched any of the recipients`, com o doctor dizendo que a chave confere | esquema errado: o `.sops.yaml` usa `age1…` (X25519) e a chave SSH é lida como `agessh`. Gere o `keys.txt` com `ssh-to-age -private-key` (passo 1) |
 
 **Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
 O `sops` já está no PATH das três máquinas.
