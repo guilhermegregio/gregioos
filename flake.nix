@@ -124,11 +124,6 @@
       nixosConfigurations = {
         gregio-asus-tuf-f15 = asus;
         gregio-note = mkNixos { host = "gregio-note"; };
-
-        # Compat: o `fr` de hoje resolve pelo profile
-        # (`nh os switch --hostname nvidia-laptop`). Sai na task 5.2, depois
-        # que o alias por host estiver em uso nas três máquinas.
-        nvidia-laptop = asus;
       };
 
       darwinConfigurations = {
