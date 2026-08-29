@@ -49,7 +49,6 @@ in {
       htop = "btop";
 
       ls-env = "fd -H -I -t f -E node_modules -E .git -E .next -E .direnv -E .nx -E .turbo -E .cache -E dist -E build '^\\.env'";
-      ls-tmux = "tmux list-panes -a -F '#S:#I.#P | #{pane_current_command} | #{pane_title}'";
     } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
       # `switch-to-configuration` é do NixOS; `steam-run` é o wrapper FHS
       # daqui; e o binário do zed-editor no nixpkgs chama-se `zeditor` (no

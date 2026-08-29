@@ -82,7 +82,7 @@ Prefixos: `feat:`, `fix:`, `chore:`
 
 ## Referências
 
-- **Tmux + sesh**: configuração inspirada em <https://github.com/omerxx/dotfiles> (plugin: <https://github.com/omerxx/catppuccin-tmux>). Ao editar `modules/home/tmux.nix`, preservar os separadores powerline rounded — U+E0B6 (``) e U+E0B4 (``) — exigem Nerd Font (já configurada via stylix com JetBrainsMono Nerd Font Mono).
+- **Multiplexer**: só o `herdr`. tmux e zellij foram removidos em 2026-08-29 — não eram usados. Os scripts em `modules/scripts/` ainda têm auto-detect para eles; é código morto tolerado, não suporte ativo.
 
 > **Nota para quem clonou este repo:** o `CLAUDE.md` descreve *estas* máquinas.
 > A tabela de hosts, os caminhos e as armadilhas valem para esta config — o que

@@ -40,9 +40,8 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
 
 - **Shell** — zsh com [prezto](https://github.com/sorin-ionescu/prezto),
   [starship](https://starship.rs), fzf-tab, zoxide, direnv, carapace
-- **Multiplexers** — [zellij](https://zellij.dev) e tmux com
-  [sesh](https://github.com/joshmedeski/sesh); layouts prontos em
-  `modules/home/common/zellij.nix`
+- **[herdr](https://herdr.dev)** — o multiplexer, usado em todas as máquinas:
+  workspaces, panes e agentes de IA
 - **Terminais** — [ghostty](https://ghostty.org) e wezterm
 - **Editores** — Neovim (LazyVim, config em `modules/home/common/nvim/`) e
   [helix](https://helix-editor.com)
@@ -50,7 +49,6 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
   `gh` e `gh-dash`
 - **CLI** — eza, fd, ripgrep, bat, jq, yq, httpie, yazi, btop, fastfetch
 - **Segredos** — sops + ssh-to-age (ver [docs/segredos-sops.md](docs/segredos-sops.md))
-- **[herdr](https://herdr.dev)** — multiplexer para agentes de IA
 
 ### Só no Linux
 
@@ -71,7 +69,7 @@ Tudo abaixo vem de `modules/home/common` e é idêntico em Linux e macOS.
   em tiling, com [JankyBorders](https://github.com/FelixKratz/JankyBorders)
   marcando a janela ativa
 - **[Raycast](https://raycast.com)** como launcher
-- **Touch ID no `sudo`**, inclusive dentro do zellij/tmux — o
+- **Touch ID no `sudo`**, inclusive dentro do multiplexer — o
   `pam_reattach` é o que faz funcionar no multiplexer
 - Defaults do sistema declarados: dock, finder, NSGlobalDomain, repeat rate
 - Apps via Homebrew cask: arc, zen, chrome, zed, dbeaver, obs, sf-symbols

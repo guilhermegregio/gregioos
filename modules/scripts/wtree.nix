@@ -118,7 +118,7 @@ pkgs.writeShellApplication {
       elif [[ "''${HERDR_ENV:-}" == "1" ]]; then
         MULTIPLEXER="herdr"
       else
-        MULTIPLEXER="tmux"
+        MULTIPLEXER="herdr"
       fi
     fi
 

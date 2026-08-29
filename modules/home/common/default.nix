@@ -17,9 +17,6 @@
     ./bash.nix
     ./zsh.nix
     ./nushell.nix
-    # terminal multiplexer
-    ./zellij.nix
-    ./tmux.nix
     # editors
     ./helix.nix
     ./nvim.nix

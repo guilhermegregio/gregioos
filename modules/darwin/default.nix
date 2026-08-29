@@ -13,7 +13,7 @@ in {
 
   security.pam.services.sudo_local = {
     touchIdAuth = true;
-    # pam_reattach: sem isso o Touch ID não chega dentro do zellij/tmux
+    # pam_reattach: sem isso o Touch ID não chega dentro do multiplexer (herdr)
     reattach = true;
   };
 
