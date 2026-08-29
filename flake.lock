@@ -324,17 +324,17 @@
         ]
       },
       "locked": {
-        "lastModified": 1786906010,
-        "narHash": "sha256-Fu0u25/S6XUBtGR4zeNIxIT1X4Waht3gEza6KZV9vEI=",
-        "ref": "refs/heads/main",
-        "rev": "2d3348a2a9732247ae98587b61bf437e96011d2c",
-        "revCount": 102,
-        "type": "git",
-        "url": "file:///home/gregio/code/gregio-marketplace"
+        "lastModified": 1788011268,
+        "narHash": "sha256-zccbthBbmZBAD/ql7XGAI+0EVkYp2iw+BpB09j23w4k=",
+        "owner": "guilhermegregio",
+        "repo": "gregio-marketplace",
+        "rev": "38cd9666e5050325529002d4d441ca9545fa2fff",
+        "type": "github"
       },
       "original": {
-        "type": "git",
-        "url": "file:///home/gregio/code/gregio-marketplace"
+        "owner": "guilhermegregio",
+        "repo": "gregio-marketplace",
+        "type": "github"
       }
     },
     "nix-index-database": {

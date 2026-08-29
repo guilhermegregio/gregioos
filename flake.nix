@@ -20,7 +20,9 @@
     herdr.inputs.nixpkgs.follows = "nixpkgs";
     graphify.url = "github:guilhermegregio/nix-dev-envs?dir=graphify";
     graphify.inputs.nixpkgs.follows = "nixpkgs";
-    kb.url = "git+file:///home/gregio/code/gregio-marketplace";
+    # Repo remoto, não caminho local: os Macs também consomem este input.
+    # Para desenvolver o kb: --override-input kb ~/code/gregio-marketplace
+    kb.url = "github:guilhermegregio/gregio-marketplace";
     kb.inputs.nixpkgs.follows = "nixpkgs";
 
     fine-cmdline = {
