@@ -149,6 +149,73 @@ O merge para a `main` pode ser feito daqui ou pelo NixOS.
 
 ---
 
+## Trocar as chaves depois (ou: "cifrei com a chave errada")
+
+`sops updatekeys` **só funciona se você conseguir decriptar o arquivo** — ele
+decripta e recifra para os novos recipients. Se a chave que cifrou não está
+mais à mão, ele falha com:
+
+```
+Failed to get the data key required to decrypt the SOPS file.
+  ageXXXX: FAILED
+    - identity did not match any of the recipients
+```
+
+### Caso A — você ainda tem a chave que cifrou
+
+```bash
+# corrija o .sops.yaml primeiro, depois:
+nix shell "nixpkgs#sops" -c sops updatekeys secrets/tokens.yaml
+```
+
+### Caso B — não tem (ou os valores eram de teste): recrie
+
+Cifrar não exige a privada, só as públicas do `.sops.yaml`. Então apagar e
+refazer é seguro e mais rápido:
+
+```bash
+cd ~/gregioos
+
+# 1. as duas chaves reais no .sops.yaml
+WORK=$(nix shell "nixpkgs#ssh-to-age" -c ssh-to-age < ~/.ssh/id_ed25519.pub)
+NIXOS=age12x8xeu48w8vkw7z3kvpwgwu32cy3vmjcpq30jyp058z7hhxyhvzs59r5g7
+echo "work=$WORK"
+
+cat > .sops.yaml <<EOF
+keys:
+  - &work  $WORK
+  - &nixos $NIXOS
+
+creation_rules:
+  - path_regex: secrets/.*\.yaml\$
+    key_groups:
+      - age:
+          - *work
+          - *nixos
+EOF
+
+# 2. a privada onde o CLI a encontra — sem isto você cifra mas não reabre
+mkdir -p ~/.config/sops/age
+nix shell "nixpkgs#ssh-to-age" -c \
+  ssh-to-age -private-key -i ~/.ssh/id_ed25519 > ~/.config/sops/age/keys.txt
+chmod 600 ~/.config/sops/age/keys.txt
+
+# 3. joga fora o antigo e cria de novo
+rm -f secrets/tokens.yaml
+nix shell "nixpkgs#sops" -c sops secrets/tokens.yaml
+
+# 4. confirme que ficou cifrado para as DUAS chaves
+rg -o "age1[a-z0-9]{20,}" secrets/tokens.yaml | sort -u   # tem que listar 2
+
+git add -A
+```
+
+> **Confira sempre o par.** O `.sops.yaml` diz para quem *novos* arquivos serão
+> cifrados; os recipients de um arquivo **já existente** ficam dentro dele. Os
+> dois divergem em silêncio — o comando do passo 4 é o que revela isso.
+
+---
+
 ## Se algo der errado
 
 | sintoma | causa provável |
@@ -157,6 +224,8 @@ O merge para a `main` pode ser feito daqui ou pelo NixOS.
 | ativação falha ao decriptar | a chave em `age.sshKeyPaths` não é a que cifrou; confira `~/.ssh/id_ed25519` |
 | `/run` não existe | o nix-darwin cria via `/etc/synthetic.conf`; reinicie e rode o switch de novo |
 | variável vazia no shell | o `initContent` só entra em sessão nova; abra outro terminal |
+| `identity did not match any of the recipients` | o arquivo foi cifrado para outra chave — ver "Trocar as chaves depois" |
+| sops procura em `~/.ssh/id_rsa` e não acha | falta o `~/.config/sops/age/keys.txt`; passo 1 |
 
 **Rotação de token:** `sops secrets/tokens.yaml`, edite, `git commit`, `fr`.
 Nenhum passo manual na máquina.
