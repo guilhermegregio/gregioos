@@ -328,11 +328,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789233330,
-        "narHash": "sha256-4bVEB87jRiNGgJ1hi7Q6NLxW6MHN5WnM9OG5zU2sd4U=",
+        "lastModified": 1789248794,
+        "narHash": "sha256-1jMg02R4QjMtA6WbpKpdMCnW3JabKdp7sK3Gp68vXKc=",
         "owner": "guilhermegregio",
         "repo": "gregio-marketplace",
-        "rev": "92f0a2b73832d45d8bcc2f8364d238202569614b",
+        "rev": "dfd3085a993cf2e8ef18d282b15d2caf2192eb37",
         "type": "github"
       },
       "original": {
