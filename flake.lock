@@ -226,11 +226,11 @@
       },
       "locked": {
         "dir": "graphify",
-        "lastModified": 1786033133,
-        "narHash": "sha256-2m8DBicrSonm7BAjWq0NuYIqImit3+ltYw+B3uIV8pI=",
+        "lastModified": 1789250713,
+        "narHash": "sha256-ZKil/WB+MepMG3G4qeR1N1EphoSA30zOUm5iILewvX4=",
         "owner": "guilhermegregio",
         "repo": "nix-dev-envs",
-        "rev": "edfabe4afe2c31219152ef2de1c05c411e505d1d",
+        "rev": "11afe86e10a0babca29ba53c6bbabc2bf87322da",
         "type": "github"
       },
       "original": {
@@ -328,11 +328,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1789248794,
-        "narHash": "sha256-1jMg02R4QjMtA6WbpKpdMCnW3JabKdp7sK3Gp68vXKc=",
+        "lastModified": 1789250618,
+        "narHash": "sha256-bWUVQABIIKKDemlWIy5LVtbLIuRd9agq7l4Rq8JpIys=",
         "owner": "guilhermegregio",
         "repo": "gregio-marketplace",
-        "rev": "dfd3085a993cf2e8ef18d282b15d2caf2192eb37",
+        "rev": "fc44b1299a92da8b689c4ae0c81513d758dfa591",
         "type": "github"
       },
       "original": {
