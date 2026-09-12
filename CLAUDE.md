@@ -87,3 +87,15 @@ Prefixos: `feat:`, `fix:`, `chore:`
 > **Nota para quem clonou este repo:** o `CLAUDE.md` descreve *estas* máquinas.
 > A tabela de hosts, os caminhos e as armadilhas valem para esta config — o que
 > for reaproveitar, confira contra o seu próprio setup. Ver o `README.md`.
+
+<!-- kb:link start -->
+> 📚 **Conhecimento deste projeto mora no vault:** `vault-pessoal/10-projects/gregioos/`
+>
+> Repo = código + runtime. Docs, arquitetura, ADRs, planos, learnings e research
+> vivem no vault (não crie doc/plano solto aqui). Consulte/registre via skill `kb`;
+> planos cross-project via `kb dev` (skill `devflow`).
+>
+> Doc citado que não existe no repo (spec, ADR, overview, guia) **não sumiu**:
+> está no vault — ache pelo índice do projeto ou pelo grafo central. Este bloco é
+> o **único** ponteiro; doc movido para o vault não deixa arquivo-stub no lugar.
+<!-- kb:link end -->

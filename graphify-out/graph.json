@@ -13,9 +13,10 @@
         "kind": "file"
       },
       "_origin": "ast",
+      "id": "dev_hm_snapshot",
       "community": 11,
-      "norm_label": "hm-snapshot.sh",
-      "id": "dev_hm_snapshot"
+      "community_name": "hm-snapshot.sh",
+      "norm_label": "hm-snapshot.sh"
     },
     {
       "label": "hm-snapshot.sh script",
@@ -27,9 +28,130 @@
         "kind": "bash_entrypoint"
       },
       "_origin": "ast",
+      "id": "dev_hm_snapshot_sh__entry",
       "community": 11,
-      "norm_label": "hm-snapshot.sh script",
-      "id": "home_gregio_code_worktrees_gregioos_sops_dev_hm_snapshot_sh__entry"
+      "community_name": "hm-snapshot.sh",
+      "norm_label": "hm-snapshot.sh script"
+    },
+    {
+      "label": "sops-doctor.sh",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "file"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "sops-doctor.sh"
+    },
+    {
+      "label": "sops-doctor.sh script",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L1",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_entrypoint"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_sh__entry",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "sops-doctor.sh script"
+    },
+    {
+      "label": "have()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L11",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_have",
+      "community": 1,
+      "community_name": "have",
+      "norm_label": "have()"
+    },
+    {
+      "label": "ssh_to_age()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L12",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_ssh_to_age",
+      "community": 1,
+      "community_name": "have",
+      "norm_label": "ssh_to_age()"
+    },
+    {
+      "label": "say()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L17",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_say",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "say()"
+    },
+    {
+      "label": "ok()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L18",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_ok",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "ok()"
+    },
+    {
+      "label": "bad()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L19",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_bad",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "bad()"
+    },
+    {
+      "label": "inf()",
+      "file_type": "code",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L20",
+      "metadata": {
+        "language": "bash",
+        "kind": "bash_function"
+      },
+      "_origin": "ast",
+      "id": "dev_sops_doctor_inf",
+      "community": 0,
+      "community_name": "sops-doctor.sh",
+      "norm_label": "inf()"
     }
   ],
   "links": [
@@ -39,11 +161,149 @@
       "source_file": "dev/hm-snapshot.sh",
       "source_location": "L1",
       "weight": 1.0,
-      "confidence_score": 1.0,
+      "_origin": "ast",
       "source": "dev_hm_snapshot",
-      "target": "home_gregio_code_worktrees_gregioos_sops_dev_hm_snapshot_sh__entry"
+      "target": "dev_hm_snapshot_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L19",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_bad",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L11",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_have",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_inf",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L18",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_ok",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L17",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_say",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L1",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_sh__entry",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "defines",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L12",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "dev_sops_doctor",
+      "target": "dev_sops_doctor_ssh_to_age",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L26",
+      "weight": 1.0,
+      "context": "call",
+      "_origin": "ast",
+      "source": "dev_sops_doctor_sh__entry",
+      "target": "dev_sops_doctor_bad",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L27",
+      "weight": 1.0,
+      "context": "call",
+      "_origin": "ast",
+      "source": "dev_sops_doctor_sh__entry",
+      "target": "dev_sops_doctor_inf",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L24",
+      "weight": 1.0,
+      "context": "call",
+      "_origin": "ast",
+      "source": "dev_sops_doctor_sh__entry",
+      "target": "dev_sops_doctor_ok",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L22",
+      "weight": 1.0,
+      "context": "call",
+      "_origin": "ast",
+      "source": "dev_sops_doctor_sh__entry",
+      "target": "dev_sops_doctor_say",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "dev/sops-doctor.sh",
+      "source_location": "L13",
+      "weight": 1.0,
+      "context": "call",
+      "_origin": "ast",
+      "source": "dev_sops_doctor_ssh_to_age",
+      "target": "dev_sops_doctor_have",
+      "confidence_score": 1.0
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "5c65880319c7431876740eef3859fc61a3244242"
+  "built_at_commit": "a2e3f6db929c48225965a6f97636c958fce4c867"
 }
