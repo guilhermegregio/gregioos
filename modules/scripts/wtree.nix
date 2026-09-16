@@ -28,7 +28,8 @@ pkgs.writeShellApplication {
 
     Cria um git worktree em ~/code/worktrees/<repo>-<branch>, copia
     qualquer .env* (.envrc, .env, .env.local, .env.production, .env.staging,
-    etc.), roda direnv allow + pnpm install e abre sessao no multiplexer
+    etc.), inicializa submodules, roda direnv allow + pnpm install e abre
+    sessao no multiplexer
     (auto-detect via $TMUX/$ZELLIJ/$HERDR_ENV; default tmux) com a tab AI
     ja rodando claude. No herdr abre um workspace agrupado ao repo pai
     (tab code com split + tab AI).
@@ -195,6 +196,16 @@ pkgs.writeShellApplication {
       git -C "$SOURCE_ROOT" worktree add "$WORKTREE_DIR" "$BRANCH"
     else
       git -C "$SOURCE_ROOT" worktree add -b "$BRANCH" "$WORKTREE_DIR" "$BASE"
+    fi
+
+    # Submodules ANTES de copiar .env: a copia faz mkdir -p do diretorio de destino,
+    # e um .env dentro de submodule (ex.: vendor/<sub>/.env.example) criaria a pasta
+    # do submodule ja populada — ai o init recusa com "destination path already
+    # exists and is not an empty directory". Inicializando primeiro, a pasta ja esta
+    # no commit certo e a copia so sobrescreve o arquivo dele, o que e inofensivo.
+    if [[ -f "$WORKTREE_DIR/.gitmodules" ]]; then
+      echo "==> git submodule update --init --recursive"
+      git -C "$WORKTREE_DIR" submodule update --init --recursive
     fi
 
     echo "==> copiando .env*"
