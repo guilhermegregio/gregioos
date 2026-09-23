@@ -246,7 +246,7 @@ pkgs.writeShellApplication {
         tmux split-window -h -t "$SESSION_NAME:code" -c "$WORKTREE_DIR"
         tmux select-pane -t "$SESSION_NAME:code.1"
 
-        tmux new-window -t "$SESSION_NAME" -n "AI" -c "$WORKTREE_DIR" "zsh -ic claude"
+        tmux new-window -t "$SESSION_NAME" -n "AI" -c "$WORKTREE_DIR" "zsh -ic 'claude --prompt-suggestions false'"
         tmux select-window -t "$SESSION_NAME:AI"
       fi
 
@@ -280,7 +280,7 @@ pkgs.writeShellApplication {
       AI_TAB=$(jq -r '.result.tab.tab_id // empty' <<<"$AI_RESP")
       AI_PANE=$(jq -r '.result.root_pane.pane_id // empty' <<<"$AI_RESP")
       if [[ -n "$AI_PANE" ]]; then
-        herdr pane run "$AI_PANE" "claude"
+        herdr pane run "$AI_PANE" "claude --prompt-suggestions false"
       fi
 
       herdr workspace focus "$WS_ID" >/dev/null

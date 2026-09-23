@@ -15,6 +15,7 @@ in {
     verify-app
     pkgs.android-tools
     pkgs.sdkmanager
+    pkgs.ffmpeg
   ];
 
   # GID do nixbld desta instalação de Nix. Confirmar com:
@@ -79,6 +80,7 @@ in {
       "intellij-idea-ce"
       "zoom"
       "slack"
+      "obsidian"
       # runtime de containers desta máquina (contexto `desktop-linux`); é ele
       # quem fornece o cliente `docker` em /usr/local/bin. No pessoal o runtime
       # é o colima, e lá o cliente vem do nix.
