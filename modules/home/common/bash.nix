@@ -23,9 +23,9 @@ in {
       zu = "sh <(curl -L https://gitlab.com/Zaney/zaneyos/-/raw/main/install-zaneyos.sh)";
       v = "nvim";
       cat = "bat";
-      ls = "eza --icons";
-      ll = "eza -lh --icons --grid --group-directories-first";
-      la = "eza -lah --icons --grid --group-directories-first";
+      ls = "eza --icons=auto";
+      ll = "eza -lh --icons=auto --grid --group-directories-first";
+      la = "eza -lah --icons=auto --grid --group-directories-first";
       ".." = "cd ..";
       ls-env = "fd -H -I -t f -E node_modules -E .git -E .next -E .direnv -E .nx -E .turbo -E .cache -E dist -E build '^\\.env'";
     } // lib.optionalAttrs pkgs.stdenv.hostPlatform.isLinux {
